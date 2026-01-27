@@ -12,30 +12,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
+        /* === ГЛОБАЛЬНЫЕ НАСТРОЙКИ И ТЕМЫ === */
         :root {
-            /* ТЕМНАЯ ТЕМА (ПО УМОЛЧАНИЮ) */
+            /* --- ТЕМНАЯ ТЕМА (Default) --- */
             --bg-body: #050505;
             --bg-content: #0a0a0a;
             --text-main: #d4d4d4;
             --accent-red: #8a1c1c;
+            --accent-glow: rgba(138, 28, 28, 0.5);
             --border-color: #262626;
             --nav-bg: rgba(10, 10, 10, 0.95);
             
-            /* Настройки Книги */
+            /* КНИГА: Темная атмосфера */
+            --book-table-bg: #12100e;
+            --book-table-gradient: radial-gradient(circle at center, #1f1a16 0%, #050403 100%);
+            --paper-color: #f2eecb;
+            --ink-color: #1a1a1a;
+            --paper-shadow: inset 4px 0px 15px rgba(0,0,0,0.05), 5px 5px 15px rgba(0,0,0,0.1);
             --book-width: 460px; 
             --book-height: 660px;
-            --paper-color: #fcfcf7; 
-            --ink-color: #1a1a1a;
         }
 
-        /* СВЕТЛАЯ ТЕМА */
         body.light-mode {
+            /* --- СВЕТЛАЯ ТЕМА --- */
             --bg-body: #f3f4f6;
             --bg-content: #ffffff;
             --text-main: #1f2937;
             --border-color: #e5e7eb;
             --nav-bg: rgba(255, 255, 255, 0.95);
+            --accent-glow: rgba(138, 28, 28, 0.2);
+
+            /* КНИГА: Светлая атмосфера */
+            --book-table-bg: #e3dcd3;
+            --book-table-gradient: radial-gradient(circle at center, #f0ebe5 0%, #cabbaa 100%);
+            --paper-color: #fffef9;
+            --ink-color: #000000;
+            --paper-shadow: inset 2px 0px 10px rgba(0,0,0,0.03), 2px 2px 10px rgba(0,0,0,0.05);
         }
 
         body { 
@@ -47,7 +59,13 @@
             transition: background-color 0.5s, color 0.5s;
         }
 
-        /* --- Типографика Старого интерфейса --- */
+        /* --- КАСТОМНЫЙ СКРОЛЛБАР --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-red); }
+
+        /* --- Типографика --- */
         h1, h2, h3, .font-oswald { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
         
         .drop-cap::first-letter { 
@@ -59,18 +77,24 @@
         p { margin-bottom: 1.5rem; text-align: justify; line-height: 1.9; }
         
         p.dialogue { 
-            margin-left: 1rem; 
-            border-left: 3px solid var(--accent-red); 
-            padding-left: 1rem; 
-            font-style: italic; 
-            color: inherit;
-            opacity: 0.9;
+            margin-left: 1rem; border-left: 3px solid var(--accent-red); 
+            padding-left: 1rem; font-style: italic; color: inherit; opacity: 0.9;
         }
 
-        /* === КНОПКИ === */
-        /* Новый интерфейс (Смещена ниже) */
+        /* === ЭЛЕМЕНТЫ УПРАВЛЕНИЯ === */
+        
+        /* Кнопка Темы */
+        .theme-toggle {
+            position: fixed; top: 25px; right: 30px; z-index: 210;
+            background: transparent; border: none; cursor: pointer;
+            color: var(--text-main); font-size: 1.5rem;
+            transition: transform 0.3s, color 0.3s;
+        }
+        .theme-toggle:hover { transform: rotate(45deg); color: var(--accent-red); text-shadow: 0 0 10px var(--accent-glow); }
+
+        /* Кнопка "Новый интерфейс" */
         .promo-btn {
-            position: fixed; top: 180px; left: 30px; z-index: 200;
+            position: fixed; top: 120px; left: 30px; z-index: 200;
             background: rgba(0,0,0,0.6); 
             border: 1px solid var(--accent-red);
             color: var(--accent-red);
@@ -80,28 +104,22 @@
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             backdrop-filter: blur(5px);
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            animation: pulse-border 3s infinite;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(138, 28, 28, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(138, 28, 28, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(138, 28, 28, 0); }
         }
         .promo-btn:hover { 
-            background: var(--accent-red); 
-            color: white;
-            box-shadow: 0 0 25px rgba(138, 28, 28, 0.5); 
+            background: var(--accent-red); color: white;
+            box-shadow: 0 0 25px var(--accent-red); 
             transform: scale(1.05);
+            animation: none;
         }
-        .promo-btn.moved {
-            transform: translateX(-400px);
-            opacity: 0; pointer-events: none;
-        }
+        .promo-btn.moved { transform: translateX(-400px); opacity: 0; pointer-events: none; }
 
-        /* Тема */
-        .theme-toggle {
-            position: fixed; top: 25px; right: 30px; z-index: 210;
-            background: transparent; border: none; cursor: pointer;
-            color: var(--text-main); font-size: 1.2rem;
-            transition: transform 0.3s, color 0.3s;
-        }
-        .theme-toggle:hover { transform: rotate(15deg); color: var(--accent-red); }
-
-        /* Возврат */
+        /* Кнопка "Вернуться" */
         .return-btn {
             position: absolute; top: 30px; left: 30px; z-index: 200;
             background: rgba(0,0,0,0.8); color: white;
@@ -129,54 +147,73 @@
             transition: background-color 0.5s;
         }
 
+        /* Логотип с эффектом Глитча при наведении */
+        .glitch-logo { position: relative; transition: color 0.3s; }
+        .glitch-logo:hover {
+            animation: glitch-anim 0.3s infinite;
+        }
+        @keyframes glitch-anim {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
         .content-card {
             background-color: var(--bg-content);
             border: 1px solid var(--border-color);
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            transition: background-color 0.5s, border-color 0.5s;
+            transition: background-color 0.5s, border-color 0.5s, transform 0.5s;
         }
+        .content-card:hover { border-color: var(--accent-red); }
         
+        /* Плавное появление текста */
+        .fade-in-text { animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
         .shatter-element { 
             transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease; 
             will-change: transform, opacity;
         }
 
         .chapter-select {
-            background: transparent;
-            color: var(--accent-red);
-            font-family: 'Oswald', sans-serif;
-            font-weight: bold;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border: none;
-            text-align: center;
-            cursor: pointer;
-            outline: none;
-            padding: 5px;
+            background: transparent; color: var(--accent-red);
+            font-family: 'Oswald', sans-serif; font-weight: bold; font-size: 1rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            border: none; text-align: center; cursor: pointer; outline: none; padding: 5px;
+            transition: color 0.3s;
         }
-        .chapter-select option {
-            background: var(--bg-content);
-            color: var(--text-main);
-            font-family: sans-serif;
-            font-size: 14px;
-        }
+        .chapter-select:hover { color: #fff; text-shadow: 0 0 10px var(--accent-red); }
+        .chapter-select option { background: var(--bg-content); color: var(--text-main); font-size: 14px; }
 
 
         /* === НОВЫЙ ИНТЕРФЕЙС (КНИГА) === */
         #new-interface {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* Более приятный фон для чтения */
-            background-color: #12100e;
-            background-image: radial-gradient(circle at center, #241e19 0%, #0d0a08 100%);
+            background-color: var(--book-table-bg);
+            background-image: var(--book-table-gradient);
             z-index: 100;
             transform: translateY(-100%);
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow: hidden;
-            perspective: 1800px;
+            perspective: 2000px;
         }
         #new-interface.active { transform: translateY(0); }
+
+        /* Частицы пыли (атмосфера) */
+        .particles-container { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .particle {
+            position: absolute; background: rgba(255,255,255,0.3); border-radius: 50%;
+            animation: float-particle linear infinite;
+        }
+        @keyframes float-particle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+        }
 
         .book-container {
             position: relative;
@@ -184,7 +221,8 @@
             height: var(--book-height);
             transform-style: preserve-3d;
             transition: transform 0.5s;
-            margin-top: 20px;
+            margin-top: 0;
+            z-index: 10;
         }
         
         .paper {
@@ -202,74 +240,48 @@
             padding: 50px 40px; box-sizing: border-box;
             backface-visibility: hidden; overflow: hidden;
             color: var(--ink-color);
-            /* Тень бумаги */
-            box-shadow: inset 4px 0px 10px rgba(0,0,0,0.03);
+            box-shadow: var(--paper-shadow);
+            transition: background-color 0.5s, color 0.5s;
         }
         
-        .front { z-index: 2; border-radius: 0 4px 4px 0; }
-        .back { 
-            transform: rotateY(180deg); 
-            z-index: 1; 
-            border-radius: 4px 0 0 4px;
-            /* Тень корешка на обратной стороне */
-            background-image: linear-gradient(to right, rgba(0,0,0,0.08), transparent 5%);
+        /* Загиб уголка при наведении (Hint) */
+        .front::after {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 0;
+            background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.2) 50%);
+            transition: width 0.3s, height 0.3s; pointer-events: none;
         }
+        .paper:hover .front::after { width: 30px; height: 30px; }
+
+        .front { z-index: 2; border-radius: 0 5px 5px 0; background-image: linear-gradient(to right, rgba(0,0,0,0.05), transparent 15%); }
+        .back { transform: rotateY(180deg); z-index: 1; border-radius: 5px 0 0 5px; background-image: linear-gradient(to left, rgba(0,0,0,0.05), transparent 15%); }
         
         .paper.flipped { transform: rotateY(-180deg); z-index: 1; }
 
         /* Типографика Книги */
         .book-content { 
-            font-family: 'Crimson Text', serif; 
-            font-size: 19px; 
-            line-height: 1.65; 
-            text-align: justify;
-            text-justify: inter-word;
-            color: #2b2b2b;
+            font-family: 'Crimson Text', serif; font-size: 19px; line-height: 1.6; 
+            text-align: justify; text-justify: inter-word; color: inherit;
         }
-        .book-content p { 
-            margin-bottom: 12px; 
-            text-indent: 2em; 
+        /* ВАЖНО: Адаптация заголовков внутри книги */
+        .book-content h1, .book-content .text-5xl, .book-content .text-9xl {
+            font-size: 28px !important; /* Принудительно уменьшаем огромные заголовки */
+            line-height: 1.2 !important;
+            margin-bottom: 20px !important;
+            text-align: center;
+            font-family: 'Cinzel', serif !important;
         }
+        .book-content .text-center { text-align: center; }
+        .book-content p { margin-bottom: 15px; text-indent: 25px; }
         
-        /* Титульник главы в книге */
-        .chapter-title-page {
-            height: 100%; display: flex; flex-direction: column; justify-content: center; text-align: center;
-            border: 1px solid transparent; /* Fix margin collapse */
-        }
+        .chapter-title-page { height: 100%; display: flex; flex-direction: column; justify-content: center; text-align: center; }
         .chapter-title-page h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 32px;
-            color: #000;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-            line-height: 1.3;
+            font-family: 'Cinzel', serif; font-size: 32px; color: inherit; margin-bottom: 20px; letter-spacing: 1px;
         }
         .chapter-title-page .chapter-num {
-            font-family: 'Oswald', sans-serif;
-            font-size: 12px;
-            letter-spacing: 4px;
-            color: #8a1c1c;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #8a1c1c;
-            display: inline-block;
-            padding-bottom: 10px;
+            font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 4px; color: var(--accent-red); 
+            text-transform: uppercase; margin-bottom: 30px; border-bottom: 1px solid var(--accent-red); 
+            display: inline-block; padding-bottom: 10px;
         }
-
-        /* Оглавление */
-        .toc-list { list-style: none; padding: 0; margin-top: 20px; text-align: left; }
-        .toc-item { 
-            border-bottom: 1px dashed #ccc; 
-            margin-bottom: 12px; 
-            padding-bottom: 4px;
-            display: flex; justify-content: space-between;
-            font-family: 'Crimson Text', serif;
-            font-size: 16px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .toc-item:hover { color: #8a1c1c; }
-        .toc-item span:last-child { font-weight: bold; }
 
         .book-cover-back {
             position: absolute; width: calc(var(--book-width) * 2 + 50px); height: calc(var(--book-height) + 20px);
@@ -277,59 +289,71 @@
             transform: translateZ(-3px); box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
 
-        /* Закладка */
         .bookmark-ribbon {
             position: absolute; top: -10px; right: 30px; width: 24px; height: 60px;
-            background: #8a1c1c;
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%);
-            transform: translateY(-100%); transition: transform 0.3s;
-            cursor: pointer; z-index: 10;
+            background: var(--accent-red); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%);
+            transform: translateY(-100%); transition: transform 0.3s; cursor: pointer; z-index: 10;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         .bookmark-ribbon.active { transform: translateY(0); }
-        .bookmark-trigger {
-            position: absolute; top: 0; right: 0; width: 60px; height: 60px;
-            z-index: 9; cursor: pointer;
-        }
+        .bookmark-trigger { position: absolute; top: 0; right: 0; width: 60px; height: 60px; z-index: 9; cursor: pointer; }
         .bookmark-trigger:hover + .bookmark-ribbon:not(.active) { transform: translateY(-70%); }
 
-        /* Ползунок прогресса книги */
-        .book-scrubber {
-            position: absolute; bottom: 30px; width: 300px;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            z-index: 50; opacity: 0; transition: opacity 0.5s; pointer-events: none;
+        .book-bottom-panel {
+            position: absolute; bottom: 20px; width: 100%; z-index: 50;
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            opacity: 0; transition: opacity 0.5s; pointer-events: none;
         }
-        #new-interface.active .book-scrubber { opacity: 1; pointer-events: auto; }
-        
-        .scrubber-track {
-            width: 100%; height: 4px; background: rgba(255,255,255,0.1);
-            border-radius: 2px; position: relative; cursor: pointer;
-        }
-        .scrubber-fill {
-            height: 100%; background: #8a1c1c; width: 0%; border-radius: 2px;
-        }
-        .page-info {
-            font-family: 'Oswald', sans-serif; font-size: 12px; color: #666; letter-spacing: 1px;
-        }
+        #new-interface.active .book-bottom-panel { opacity: 1; pointer-events: auto; }
 
-        /* Мобильная версия */
+        .scrubber-track {
+            width: 300px; height: 4px; background: rgba(128,128,128,0.3); border-radius: 2px; position: relative; cursor: pointer; transition: height 0.2s;
+        }
+        .scrubber-track:hover { height: 8px; }
+        .scrubber-fill { height: 100%; background: var(--accent-red); width: 0%; border-radius: 2px; box-shadow: 0 0 10px var(--accent-red); }
+        
+        .toc-btn-small {
+            font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--text-main); 
+            text-transform: uppercase; cursor: pointer; border-bottom: 1px solid transparent; opacity: 0.6; transition: 0.3s;
+        }
+        .toc-btn-small:hover { opacity: 1; border-color: var(--accent-red); color: var(--accent-red); }
+
+        /* === МОБИЛЬНАЯ АДАПТАЦИЯ === */
         @media (max-width: 850px) {
-            :root { --book-width: 94vw; --book-height: 72vh; }
-            .book-container { width: var(--book-width); margin-top: 0; }
-            .paper { left: 0; }
-            .front { border-radius: 4px; padding: 30px 20px; }
-            .book-content { font-size: 18px; }
+            :root { --book-width: 90vw; --book-height: 75vh; }
+            .book-container { width: var(--book-width); height: var(--book-height); }
+            .book-cover-back { width: calc(var(--book-width) + 10px); left: -5px; }
+            .paper { left: 0; transition: transform 0.5s ease-out; }
+            
+            .front { 
+                border-radius: 5px; padding: 40px 25px; border-right: none;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+            .back { display: none; }
+            
+            .paper.flipped { transform: translateX(-120%) rotateY(-20deg); opacity: 0; }
+            .book-content { font-size: 17px; line-height: 1.5; }
+            .book-content h1 { font-size: 24px !important; } /* Еще меньше на мобилке */
+            
             #new-interface { padding-top: 0; }
-            .promo-btn { top: auto; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80%; text-align: center; }
-            .return-btn { top: 10px; left: 10px; padding: 6px 12px; }
-            .theme-toggle { top: 10px; right: 10px; }
-            .book-scrubber { bottom: 90px; width: 80%; }
+            .promo-btn { top: auto; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80%; text-align: center; font-size: 14px;}
+            .return-btn { top: 15px; left: 15px; }
+            .theme-toggle { top: 15px; right: 15px; }
+            .book-bottom-panel { bottom: 80px; width: 90%; }
+            .scrubber-track { width: 100%; }
+            
+            /* Старый интерфейс адаптив */
+            .text-3xl { font-size: 1.5rem; } /* Уменьшаем заголовок хедера */
+            .px-4 { padding-left: 1rem; padding-right: 1rem; }
         }
     </style>
 </head>
 <body>
 
     <script src="books_data.js"></script>
+
+    <!-- ЧАСТИЦЫ ДЛЯ КНИГИ -->
+    <div id="particles" class="particles-container"></div>
 
     <!-- КНОПКИ -->
     <button class="theme-toggle" onclick="toggleTheme()">🌗</button>
@@ -346,7 +370,7 @@
     <div id="old-interface">
         <nav class="shatter-element sticky top-0 z-40 site-header">
             <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-                <div class="text-2xl md:text-3xl font-bold font-oswald text-white tracking-widest" style="color: var(--text-main)">
+                <div class="text-2xl md:text-3xl font-bold font-oswald text-white tracking-widest glitch-logo" style="color: var(--text-main); cursor: pointer;">
                     ARAMASA<span class="text-[#8a1c1c]">.LEGACY</span>
                 </div>
                 <div class="hidden md:flex space-x-8">
@@ -369,23 +393,42 @@
         </div>
     </div>
 
-    <!-- === НОВЫЙ ИНТЕРФЕЙС (ЕДИНАЯ КНИГА) === -->
+    <!-- === НОВЫЙ ИНТЕРФЕЙС (КНИГА) === -->
     <div id="new-interface">
         <div class="book-container" id="book">
             <div class="book-cover-back"></div>
             <!-- Страницы -->
         </div>
         
-        <!-- Ползунок навигации -->
-        <div class="book-scrubber">
+        <div class="book-bottom-panel">
             <div class="scrubber-track" onclick="scrubBook(event)">
                 <div class="scrubber-fill" id="scrubber-fill"></div>
             </div>
-            <div class="page-info" id="page-info">Стр. 1</div>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div class="page-info" id="page-info" style="color: var(--text-main); font-size: 12px; font-family: 'Oswald';">Стр. 1</div>
+                <div class="toc-btn-small" onclick="flipToPage(0)">В ОГЛАВЛЕНИЕ</div>
+            </div>
         </div>
     </div>
 
     <script>
+        // === ЧАСТИЦЫ ===
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for(let i=0; i<30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.width = Math.random() * 3 + 'px';
+                p.style.height = p.style.width;
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                p.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
         // === ИНИЦИАЛИЗАЦИЯ ===
         window.onload = function() {
             if (typeof bookData === 'undefined') {
@@ -399,11 +442,8 @@
         let isNewInterface = false;
         let bookmarkedPages = {}; 
         let totalBookPages = 0;
-        let currentPage = 0; // Текущий разворот (лист)
-        
-        // Карта: номер страницы -> индекс главы
+        let currentPage = 0;
         let pageToChapterMap = [];
-        // Карта: индекс главы -> номер первой страницы
         let chapterStartMap = {};
 
         function initApp() {
@@ -413,7 +453,6 @@
             const savedBm = localStorage.getItem('aramasa_bookmarks');
             if (savedBm) bookmarkedPages = JSON.parse(savedBm);
 
-            // Заполняем селект в старом интерфейсе
             const select = document.getElementById('chapter-select');
             bookData.forEach((ch, i) => {
                 const opt = document.createElement('option');
@@ -430,7 +469,6 @@
             localStorage.setItem('aramasa_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
 
-        // === СТАРЫЙ ИНТЕРФЕЙС ===
         function loadChapter(index) {
             if (index < 0) index = 0;
             if (index >= bookData.length) index = bookData.length - 1;
@@ -444,6 +482,11 @@
                 .replace(/text-gray-600/g, "opacity-80")
                 .replace(/text-white/g, "");
             
+            // Fade effect reset
+            oldArea.classList.remove('fade-in-text');
+            void oldArea.offsetWidth; // trigger reflow
+            oldArea.classList.add('fade-in-text');
+
             oldArea.innerHTML = `
                 <h2 class="text-3xl md:text-5xl font-bold font-oswald mb-12 pb-6 border-b border-gray-700 tracking-wide">${chapter.title}</h2>
                 <div class="chapter-text">${safeContent}</div>
@@ -452,15 +495,15 @@
             window.scrollTo(0,0);
             localStorage.setItem('aramasa_chapter', index);
             
-            // Если книга уже открыта, синхронизируем её позицию
             if(isNewInterface && chapterStartMap[index] !== undefined) {
-                flipToPage(chapterStartMap[index] / 2);
+                const isMobile = window.innerWidth <= 850;
+                const pageIdx = isMobile ? chapterStartMap[index] : Math.floor(chapterStartMap[index] / 2);
+                flipToPage(pageIdx);
             }
         }
 
         function changeChapter(dir) { loadChapter(currentChapterIndex + dir); }
 
-        // === НОВЫЙ ИНТЕРФЕЙС ===
         function toggleNewInterface() {
             const oldUI = document.getElementById('old-interface');
             const newUI = document.getElementById('new-interface');
@@ -469,19 +512,14 @@
             const shatterEls = document.querySelectorAll('.shatter-element');
 
             if (!isNewInterface) {
-                // Генерируем ВСЮ книгу один раз
-                if (document.querySelectorAll('.paper').length === 0) {
-                    generateWholeBook();
-                }
+                if (document.querySelectorAll('.paper').length === 0) generateWholeBook();
                 
-                // Переходим на страницу текущей главы
                 if (chapterStartMap[currentChapterIndex] !== undefined) {
-                    // Используем сохраненную закладку если есть, иначе начало главы
                     let targetPage = chapterStartMap[currentChapterIndex];
                     if (bookmarkedPages[currentChapterIndex]) targetPage = bookmarkedPages[currentChapterIndex];
-                    
-                    // Конвертируем в индексы листов (page / 2)
-                    setTimeout(() => flipToPage(Math.floor(targetPage / 2)), 100);
+                    const isMobile = window.innerWidth <= 850;
+                    const pageIdx = isMobile ? targetPage : Math.floor(targetPage / 2);
+                    setTimeout(() => flipToPage(pageIdx), 100);
                 }
 
                 promoBtn.classList.add('moved');
@@ -503,39 +541,37 @@
             }
         }
 
-        // === ГЕНЕРАТОР ЕДИНОЙ КНИГИ ===
         function generateWholeBook() {
             const bookEl = document.getElementById('book');
             bookEl.innerHTML = '<div class="book-cover-back"></div>';
             
             let allPagesHtml = [];
             
-            // 1. ОГЛАВЛЕНИЕ (Первые 2 страницы)
             let tocHtml = `<div class="chapter-title-page">
                 <h1>ОГЛАВЛЕНИЕ</h1>
                 <ul class="toc-list">`;
             bookData.forEach((ch, i) => {
+                const titleShort = ch.title.split(':')[0] || ch.title;
                 tocHtml += `<li class="toc-item" onclick="jumpToChapter(${i})">
-                    <span>${ch.title.split(':')[0]}</span> <span>Гл. ${i}</span>
+                    <span>${titleShort}</span> <span>></span>
                 </li>`;
             });
             tocHtml += `</ul></div>`;
             allPagesHtml.push(tocHtml);
-            allPagesHtml.push(""); // Пустая страница после оглавления
+            
+            const isMobile = window.innerWidth <= 850;
+            if(!isMobile) allPagesHtml.push(""); 
 
-            // 2. ГЕНЕРАЦИЯ ГЛАВ
-            let globalPageCounter = 2; // Начинаем после оглавления
+            let globalPageCounter = isMobile ? 1 : 2; 
 
             bookData.forEach((chapter, chIndex) => {
-                // Запоминаем, где начинается глава
                 chapterStartMap[chIndex] = globalPageCounter;
 
-                // Парсинг
                 const temp = document.createElement('div');
                 temp.innerHTML = chapter.htmlContent;
+                // Берем все элементы, чтобы не потерять заголовки
                 const elements = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, div, blockquote, ul, ol'));
                 
-                // Титульник главы
                 let pagesForChapter = [];
                 pagesForChapter.push(`
                     <div class="chapter-title-page">
@@ -545,19 +581,20 @@
                     </div>
                 `);
 
-                // Нарезка текста
                 let currentText = "";
                 let charCount = 0;
-                const CHAR_LIMIT = 520; 
+                const CHAR_LIMIT = isMobile ? 320 : 420; // Уменьшенный лимит для предотвращения переполнения
 
                 elements.forEach((el, i) => {
-                    // Очистка стилей
+                    // Очистка и замена классов для книги
+                    // ВАЖНО: Удаляем классы text-9xl и подобные, заменяя на нейтральные
                     let html = el.outerHTML
-                        .replace(/text-gray-900|text-white|text-gray-200/g, "text-black");
+                        .replace(/text-5xl|text-9xl|text-4xl/g, "") // Убираем огромные шрифты
+                        .replace(/text-gray-900|text-white|text-gray-200/g, "");
                     
                     const textLen = el.innerText.length;
                     
-                    if ((el.tagName.match(/H[1-6]/) && charCount > 100) || (charCount + textLen > CHAR_LIMIT)) {
+                    if ((el.tagName.match(/H[1-6]/) && charCount > 50) || (charCount + textLen > CHAR_LIMIT)) {
                         if (currentText) {
                             pagesForChapter.push(`<div class="book-content">${currentText}</div>`);
                             currentText = "";
@@ -572,42 +609,44 @@
                     }
                 });
 
-                // Добавляем страницы главы в общий массив
                 pagesForChapter.forEach(p => {
                     allPagesHtml.push(p);
-                    // Заполняем карту
                     pageToChapterMap[globalPageCounter] = chIndex;
-                    pageToChapterMap[globalPageCounter + 1] = chIndex; // Front and Back
+                    if (!isMobile) pageToChapterMap[globalPageCounter + 1] = chIndex;
                     globalPageCounter++;
                 });
 
-                // Если страниц в главе нечетное кол-во, добавляем пустую (чтобы новая глава начиналась с ПРАВОЙ страницы)
-                if (pagesForChapter.length % 2 !== 0) {
+                if (!isMobile && pagesForChapter.length % 2 !== 0) {
                     allPagesHtml.push(""); 
                     globalPageCounter++;
                 }
             });
 
-            // Рендерим листы (Papers)
             totalBookPages = allPagesHtml.length;
-            const sheets = Math.ceil(totalBookPages / 2);
+            const sheets = isMobile ? totalBookPages : Math.ceil(totalBookPages / 2);
 
             for (let i = 0; i < sheets; i++) {
-                const frontContent = allPagesHtml[i*2] || "";
-                const backContent = allPagesHtml[i*2+1] || "";
-                const pageNumFront = i*2 + 1;
-                const pageNumBack = i*2 + 2;
+                let frontContent, backContent;
+                if (isMobile) {
+                    frontContent = allPagesHtml[i] || "";
+                    backContent = "";
+                } else {
+                    frontContent = allPagesHtml[i*2] || "";
+                    backContent = allPagesHtml[i*2+1] || "";
+                }
 
                 const paper = document.createElement('div');
                 paper.className = 'paper';
                 paper.id = `sheet-${i}`;
-                paper.style.zIndex = sheets - i; // Stack order
+                paper.style.zIndex = sheets - i;
 
-                // Закладка
-                const chIdx = pageToChapterMap[i*2] || 0;
-                // Проверяем сохраненную закладку
+                const chIdx = pageToChapterMap[isMobile ? i : i*2] || 0;
                 let isBookmarked = false;
-                if (bookmarkedPages[chIdx] && Math.floor(bookmarkedPages[chIdx]/2) === i) isBookmarked = true;
+                if (bookmarkedPages[chIdx]) {
+                    const savedP = bookmarkedPages[chIdx];
+                    const checkP = isMobile ? i : Math.floor(savedP/2);
+                    if(checkP === i) isBookmarked = true;
+                }
                 const ribbonClass = isBookmarked ? "bookmark-ribbon active" : "bookmark-ribbon";
 
                 paper.innerHTML = `
@@ -615,11 +654,11 @@
                         <div class="bookmark-trigger" onclick="toggleBookmark(event, ${i})"></div>
                         <div class="${ribbonClass}" id="ribbon-${i}"></div>
                         <div style="height:100%;">${frontContent}</div>
-                        <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:10px; color:#888;">${pageNumFront}</div>
+                        <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:10px; opacity:0.5; font-family:'Oswald';">${isMobile ? i+1 : i*2+1}</div>
                     </div>
                     <div class="back">
                         <div style="height:100%;">${backContent}</div>
-                        <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:10px; color:#888;">${pageNumBack}</div>
+                        <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:10px; opacity:0.5; font-family:'Oswald';">${i*2+2}</div>
                     </div>
                 `;
 
@@ -630,48 +669,34 @@
 
                 bookEl.appendChild(paper);
             }
-            
             updateScrubber(0);
         }
 
-        // === УПРАВЛЕНИЕ КНИГОЙ ===
         function handleFlip(sheetIndex) {
             const paper = document.getElementById(`sheet-${sheetIndex}`);
-            const sheets = document.querySelectorAll('.paper');
-            const total = sheets.length;
+            const sheetsCount = isMobile() ? totalBookPages : Math.ceil(totalBookPages / 2);
 
             if (paper.classList.contains('flipped')) {
-                // Листаем НАЗАД (влево)
-                // Нужно перевернуть ЭТОТ лист обратно
-                // Но если мы кликнули на paper-5, который перевернут, мы хотим вернуть его
-                // Если мы кликаем на paper-4 (который под ним), ничего не делаем в этой логике, 
-                // так как клик идет по самому верхнему элементу.
-                
-                // В данной DOM структуре: клик по back стороны sheet-5 триггерит этот sheet-5.
                 paper.classList.remove('flipped');
-                setTimeout(() => paper.style.zIndex = total - sheetIndex, 350); // Возвращаем z-index
+                setTimeout(() => paper.style.zIndex = sheetsCount - sheetIndex, 350);
                 currentPage = sheetIndex;
             } else {
-                // Листаем ВПЕРЕД (вправо)
                 paper.classList.add('flipped');
-                paper.style.zIndex = sheetIndex + 1; // Убираем вниз стопки слева
+                paper.style.zIndex = sheetIndex + 1;
                 currentPage = sheetIndex + 1;
             }
             
             updateScrubber(currentPage);
             
-            // Синхронизация главы (если перешли границу)
-            const realPage = currentPage * 2;
+            const realPage = isMobile() ? currentPage : currentPage * 2;
             const ch = pageToChapterMap[realPage];
             if (ch !== undefined && ch !== currentChapterIndex) {
                 currentChapterIndex = ch;
-                // Тихо обновляем старый интерфейс
                 document.getElementById('chapter-select').value = ch;
                 localStorage.setItem('aramasa_chapter', ch);
             }
         }
 
-        // Прыжок к странице (для навигации)
         function flipToPage(targetSheetIndex) {
             const sheets = document.querySelectorAll('.paper');
             const total = sheets.length;
@@ -690,17 +715,19 @@
         }
 
         function jumpToChapter(chIndex) {
-            event.stopPropagation(); // Чтобы не листать страницу при клике на ссылку
+            event.stopPropagation();
             const page = chapterStartMap[chIndex];
-            if (page) flipToPage(Math.floor(page / 2));
+            if (page !== undefined) {
+                const sheetIdx = isMobile() ? page : Math.floor(page / 2);
+                flipToPage(sheetIdx);
+            }
         }
 
-        // === СКРАББЕР (ПОЛЗУНОК) ===
         function updateScrubber(sheetIdx) {
             const sheets = document.querySelectorAll('.paper').length;
             const pct = (sheetIdx / sheets) * 100;
             document.getElementById('scrubber-fill').style.width = pct + "%";
-            document.getElementById('page-info').innerText = `Разворот ${sheetIdx} из ${sheets}`;
+            document.getElementById('page-info').innerText = `Стр. ${isMobile() ? sheetIdx+1 : sheetIdx*2+1}`;
         }
 
         function scrubBook(e) {
@@ -713,14 +740,12 @@
             flipToPage(targetSheet);
         }
 
-        // === ЗАКЛАДКИ ===
         function toggleBookmark(e, sheetIdx) {
             e.stopPropagation();
             const ribbon = document.getElementById(`ribbon-${sheetIdx}`);
             ribbon.classList.toggle('active');
             
-            // Сохраняем для текущей главы
-            const realPage = sheetIdx * 2;
+            const realPage = isMobile() ? sheetIdx : sheetIdx * 2;
             const ch = pageToChapterMap[realPage] || 0;
             
             if (ribbon.classList.contains('active')) {
@@ -730,6 +755,8 @@
             }
             localStorage.setItem('aramasa_bookmarks', JSON.stringify(bookmarkedPages));
         }
+
+        function isMobile() { return window.innerWidth <= 850; }
 
     </script>
 </body>
