@@ -5,15 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Хроники Клана Арамаса</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Шрифты -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- ОРИГИНАЛЬНЫЕ СТИЛИ (Твой код) --- */
+        /* ==================== ОРИГИНАЛЬНЫЕ СТИЛИ (Original Dark) ==================== */
         :root {
+            /* Базовая тема (Темная) */
+            --bg-main: #0a0a0a;
+            --bg-card: #141414;
+            --text-main: #e5e5e5;
+            --text-muted: #a3a3a3;
+            --accent: #8a1c1c;
+            --border: #262626;
+            --nav-bg: rgba(10, 10, 10, 0.98);
+            --drop-cap: #8a1c1c;
+            
+            /* Настройки Книги */
+            --book-bg: #12100e;
+            --paper-color: #f2eecb; 
+            --ink-color: #1a1a1a;
+            --line-color: rgba(0,0,0,0.05);
+            --book-width: 460px; 
+            --book-height: 660px;
+        }
+
+        /* Светлая тема (переключаемая) */
+        body.light-mode {
             --bg-main: #f9f7f1;
             --bg-card: #ffffff;
             --text-main: #1a1a1a;
@@ -23,28 +43,11 @@
             --nav-bg: rgba(255, 255, 255, 0.98);
             --drop-cap: #991b1b;
             
-            /* Для книги */
-            --book-bg: #12100e;
-            --paper-color: #f2eecb; 
-            --ink-color: #1a1a1a;
-            --book-width: 460px; 
-            --book-height: 660px;
-        }
-
-        body.dark-mode {
-            --bg-main: #121212;
-            --bg-card: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --accent: #ff4d4d;
-            --border: #333333;
-            --nav-bg: rgba(30, 30, 30, 0.98);
-            --drop-cap: #ff4d4d;
-            
-            /* Книга Dark */
-            --book-bg: #1a1a1a;
-            --paper-color: #2b2b2b;
-            --ink-color: #d4d4d4;
+            /* Книга Light */
+            --book-bg: #e3dcd3;
+            --paper-color: #fffef9;
+            --ink-color: #000000;
+            --line-color: rgba(0,0,0,0.05);
         }
 
         body {
@@ -57,7 +60,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Утилитные классы из оригинала */
+        /* Утилитные классы оригинала */
         h1, h2, h3, .font-oswald { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
         .tab-section { display: none; animation: fadeIn 0.4s ease-out; }
         .tab-section.active-section { display: block; }
@@ -69,15 +72,20 @@
             min-height: 80vh; border-radius: 4px; transition: background-color 0.3s ease;
         }
 
-        .chapter-content { display: none; }
-        .chapter-content.active-chapter { display: block; animation: fadeIn 0.6s ease; }
+        /* Стили текста в оригинале */
         .chapter-header { text-align: center; margin-bottom: 4rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
         .chapter-number { font-family: 'Oswald', sans-serif; font-size: 0.9rem; letter-spacing: 0.3em; color: var(--accent); display: block; margin-bottom: 1rem; font-weight: 700; }
         .chapter-title { font-family: 'Lora', serif; font-size: 3rem; font-weight: 700; line-height: 1.1; }
+        
         .drop-cap::first-letter { font-family: 'Lora', serif; font-size: 5rem; font-weight: 700; float: left; margin-right: 1rem; margin-top: -0.5rem; line-height: 0.8; color: var(--drop-cap); }
         p.dialogue { margin-left: 2rem; position: relative; }
         p.dialogue::before { content: '—'; position: absolute; left: -1.5rem; color: var(--accent); font-weight: bold; }
         
+        /* Навигация Оригинала */
+        .nav-link { cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid transparent; transition: all 0.3s; color: var(--text-muted); }
+        .nav-link.active-tab { color: var(--accent); border-bottom-color: var(--accent); }
+        .nav-link:hover { color: var(--accent); }
+
         .controls-bar {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: var(--nav-bg); backdrop-filter: blur(10px);
@@ -93,25 +101,30 @@
             font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border-radius: 2px;
         }
         .btn-nav:hover:not(:disabled) { background: var(--accent); color: white; border-color: var(--accent); }
+        
         .chapter-select { appearance: none; background: transparent; border: none; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: bold; color: var(--text-main); cursor: pointer; text-align: right; padding-right: 1.5rem; }
         .chapter-select option { background-color: var(--bg-card); color: var(--text-main); }
+        #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); width: 0%; z-index: 200; transition: width 0.3s; }
 
-        /* --- СТИЛИ ДЛЯ РЕЖИМА КНИГИ (НОВЫЙ) --- */
+
+        /* ==================== СТИЛИ НОВОГО ИНТЕРФЕЙСА (КНИГА/БЛОКНОТ) ==================== */
         #book-view {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--book-bg);
             z-index: 200;
-            transform: translateY(100%); /* Скрыт внизу */
+            transform: translateY(100%); /* Скрыт */
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow: hidden;
         }
         #book-view.active { transform: translateY(0); }
 
+        /* ПК КНИГА (3D) */
         .book-container-3d {
             position: relative; width: calc(var(--book-width) * 2); height: var(--book-height);
             transform-style: preserve-3d; perspective: 2000px;
         }
+        
         .paper {
             position: absolute; width: var(--book-width); height: var(--book-height);
             top: 0; left: var(--book-width);
@@ -121,9 +134,9 @@
             transform-style: preserve-3d;
             z-index: 1; cursor: pointer;
             box-shadow: inset 3px 0 10px rgba(0,0,0,0.1);
-            visibility: hidden; /* Оптимизация */
+            visibility: hidden; /* Скрыты по умолчанию для оптимизации */
         }
-        .paper.visible { visibility: visible; }
+        .paper.visible { visibility: visible; } 
         .paper.flipped { transform: rotateY(-180deg); z-index: 1; }
         
         .front, .back {
@@ -132,66 +145,120 @@
             backface-visibility: hidden; overflow: hidden;
             color: var(--ink-color);
         }
-        .front { z-index: 2; border-radius: 0 5px 5px 0; }
-        .back { transform: rotateY(180deg); z-index: 1; border-radius: 5px 0 0 5px; background: #f0f0f0; }
-        body.dark-mode .back { background: #333; }
+        .front { z-index: 2; border-radius: 0 5px 5px 0; background-image: linear-gradient(to right, rgba(0,0,0,0.05), transparent 20%); }
+        .back { transform: rotateY(180deg); z-index: 1; border-radius: 5px 0 0 5px; background-image: linear-gradient(to left, rgba(0,0,0,0.05), transparent 20%); }
 
-        .book-content { font-family: 'Crimson Text', serif; font-size: 18px; line-height: 1.6; text-align: justify; }
-        .book-content h1 { font-family: 'Cinzel'; font-size: 24px; text-align: center; margin-bottom: 20px; }
+        .book-content { font-family: 'Crimson Text', serif; font-size: 19px; line-height: 1.6; text-align: justify; color: inherit; }
+        .book-content h1 { font-family: 'Cinzel'; font-size: 28px; text-align: center; margin-bottom: 20px; color: inherit; }
+        .book-content p { margin-bottom: 1rem; text-indent: 1.5rem; }
         
-        /* КНОПКА ПЕРЕКЛЮЧЕНИЯ РЕЖИМОВ */
+        /* Навигация в книге (ПК) */
+        .book-nav-pc {
+            position: absolute; bottom: 30px; width: 100%;
+            display: flex; justify-content: center; align-items: center; gap: 20px;
+            pointer-events: none; z-index: 50;
+        }
+        .book-nav-pc button, .book-nav-pc span { pointer-events: auto; }
+        .scrubber { width: 300px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 3px; position: relative; cursor: pointer; }
+        .scrubber-fill { height: 100%; background: var(--accent); width: 0%; border-radius: 3px; }
+
+        /* КНОПКА ОТКРЫТИЯ КНИГИ */
         .mode-switch-btn {
             position: fixed; bottom: 100px; right: 20px; z-index: 150;
             background: var(--accent); color: white;
-            padding: 15px; border-radius: 50%;
+            padding: 15px; border-radius: 50px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             cursor: pointer; transition: transform 0.3s;
-            display: flex; align-items: center; justify-content: center;
-            width: 60px; height: 60px;
+            display: flex; align-items: center; gap: 10px;
+            padding-left: 20px; padding-right: 20px;
+            font-family: 'Oswald'; font-size: 0.9rem; letter-spacing: 1px;
         }
-        .mode-switch-btn:hover { transform: scale(1.1); }
-        .mode-switch-btn i { font-size: 24px; }
+        .mode-switch-btn:hover { transform: scale(1.05); }
+        .mode-switch-btn.hidden-btn { transform: translateX(200px); opacity: 0; pointer-events: none; }
 
         /* Кнопка закрытия книги */
         .close-book-btn {
-            position: absolute; top: 20px; right: 20px;
-            color: var(--text-main); font-size: 30px; cursor: pointer;
-            z-index: 300; opacity: 0.7; transition: 0.3s;
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(0,0,0,0.5); color: white; padding: 8px 16px; border-radius: 4px;
+            font-family: 'Oswald'; font-size: 0.8rem; cursor: pointer;
+            z-index: 300; transition: 0.3s;
         }
-        .close-book-btn:hover { opacity: 1; color: var(--accent); }
+        .close-book-btn:hover { background: var(--accent); }
 
-        /* МОБИЛЬНАЯ ВЕРСИЯ КНИГИ (БЛОКНОТ) */
+        /* Оглавление */
+        .toc-list { list-style: none; padding: 0; }
+        .toc-item { border-bottom: 1px dashed #999; padding: 8px 0; cursor: pointer; display: flex; justify-content: space-between; }
+        .toc-item:hover { color: var(--accent); }
+
+        /* ==================== МОБИЛЬНАЯ ВЕРСИЯ (БЛОКНОТ) ==================== */
         @media (max-width: 850px) {
             .book-container-orig { padding: 2rem 1.5rem; }
             
-            /* Блокнот */
-            .book-container-3d { width: 94vw; height: 80vh; perspective: none; }
-            .paper { width: 100%; height: 100%; left: 0; transform-origin: top center; transition: transform 0.4s; border-radius: 0 0 10px 10px; }
-            .front { 
-                padding: 20px 20px 80px 20px; /* Отступ снизу для навигации */
-                overflow-y: auto; /* СКРОЛЛ */
-                border-right: none;
-                box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            /* Контейнер Блокнота */
+            .book-container-3d { 
+                width: 94vw; height: 80vh; perspective: none; margin-top: 40px; 
             }
-            .back { display: none !important; }
             
-            /* Анимация вверх */
-            .paper.flipped { transform: translateY(-95%) scale(0.95); opacity: 1; visibility: visible; z-index: 0 !important; }
-            /* Затемнение стопки */
-            .paper.flipped .front { background: rgba(0,0,0,0.8); color: transparent; pointer-events: none; }
-            .paper.flipped .front::after {
-                content: 'ВЕРНУТЬ'; position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: white; font-family: 'Oswald';
+            /* Лист */
+            .paper { 
+                width: 100%; height: 100%; left: 0; top: 0;
+                transform-origin: top center; 
+                transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Пружина */
+                border-radius: 0 0 10px 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             }
+            
+            .front { 
+                padding: 30px 20px 80px 20px; /* Большой отступ снизу для навигации */
+                overflow-y: auto; /* СКРОЛЛ ТЕКСТА */
+                border-right: none;
+                /* Линовка */
+                background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+                background-size: 100% 32px;
+            }
+            .back { display: none !important; } /* Оптимизация */
             
             /* Спираль */
             .spiral {
                 position: absolute; top: -15px; left: 2%; width: 96%; height: 30px;
-                background: radial-gradient(circle, #555 30%, transparent 40%) 0 0; background-size: 20px 20px;
-                z-index: 100; pointer-events: none;
+                background: radial-gradient(circle, #444 30%, transparent 40%) 0 0;
+                background-size: 20px 20px; z-index: 100; pointer-events: none; display: block !important;
             }
             
-            .mode-switch-btn { bottom: 90px; right: 20px; }
+            /* Анимация перелистывания (ВВЕРХ) */
+            .paper.flipped { 
+                transform: translateY(-92%) scale(0.95); 
+                opacity: 1; visibility: visible; 
+                z-index: 0 !important; cursor: pointer;
+            }
+            /* Затемнение стопки */
+            .paper.flipped .front { 
+                background: #222; color: transparent; pointer-events: none; overflow: hidden;
+                border-bottom: 2px solid #444;
+            }
+            .paper.flipped .front::after {
+                content: 'ВЕРНУТЬ'; position: absolute; bottom: 5px; left: 0; width: 100%; text-align: center;
+                color: #fff; font-family: 'Oswald'; font-size: 10px; letter-spacing: 2px; opacity: 0.7;
+            }
+
+            .book-content { font-size: 16px; line-height: 32px; /* Под линовку */ }
+            .book-content h1 { font-size: 22px; line-height: 32px; }
+            
+            /* Навигация моб */
+            .book-nav-pc { display: none; } /* Скрываем ПК навигацию */
+            .mobile-nav-controls {
+                display: flex; position: absolute; bottom: 20px; width: 90%; 
+                justify-content: space-between; align-items: center;
+                background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+                padding: 10px 20px; border-radius: 20px; z-index: 100;
+            }
+            .nav-btn-mob { color: white; font-family: 'Oswald'; font-size: 12px; }
+            .mob-page-info { color: white; font-family: 'Oswald'; font-size: 12px; }
+            
+            .mode-switch-btn { bottom: 90px; right: 20px; font-size: 0.8rem; padding: 10px 15px; }
         }
+        .spiral { display: none; }
+        .mobile-nav-controls { display: none; }
     </style>
 </head>
 <body>
@@ -200,19 +267,24 @@
     <script src="books_data.js"></script>
 
     <!-- === КНОПКА ПЕРЕКЛЮЧЕНИЯ РЕЖИМА === -->
-    <div class="mode-switch-btn" onclick="toggleBookMode()" title="Режим чтения">
-        <i class="fa-solid fa-book-open"></i>
+    <div id="main-book-btn" class="mode-switch-btn" onclick="toggleBookMode()" title="Режим чтения">
+        <i class="fa-solid fa-book-open"></i> <span>ЧИТАТЬ КАК КНИГУ</span>
     </div>
 
     <!-- ======================= ОРИГИНАЛЬНЫЙ РЕЖИМ ======================= -->
     <div id="original-view">
-        <div id="progress-bar" style="position:fixed; top:0; left:0; height:4px; background:var(--accent); width:0%; z-index:200;"></div>
+        <div id="progress-bar"></div>
 
         <!-- ШАПКА -->
         <nav class="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--nav-bg)] backdrop-blur-md transition-colors duration-300">
             <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                 <div class="text-xl md:text-2xl font-bold tracking-tighter font-oswald cursor-pointer" onclick="window.scrollTo(0,0)">
                     ARAMASA<span style="color: var(--accent)">.SAGA</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="switchTab('read')" id="tab-read" class="nav-link active-tab font-oswald text-sm font-bold tracking-widest uppercase">Читать</button>
+                    <button onclick="switchTab('audio')" id="tab-audio" class="nav-link font-oswald text-sm font-bold tracking-widest uppercase">Аудио</button>
+                    <button onclick="switchTab('manga')" id="tab-manga" class="nav-link font-oswald text-sm font-bold tracking-widest uppercase">Манга</button>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="hidden md:block">
@@ -226,35 +298,46 @@
         </nav>
 
         <main class="flex-grow">
-            <div class="book-container-orig">
-                <div id="original-content">
-                    <!-- Сюда JS вставит главу в оригинальном дизайне -->
+            <!-- Вкладка ЧИТАТЬ -->
+            <section id="section-read" class="tab-section active-section">
+                <div class="book-container-orig">
+                    <div id="original-content">
+                        <!-- Сюда JS вставит главу -->
+                        <div class="text-center p-10 text-gray-500">Загрузка контента...</div>
+                    </div>
                 </div>
-            </div>
+                <div class="controls-bar" id="controls-read">
+                    <button onclick="changeChapterOrig(-1)" class="btn-nav">← Назад</button>
+                    <span id="chapter-indicator" class="font-bold text-sm tracking-widest uppercase self-center" style="color: var(--text-main)">Вступление</span>
+                    <button onclick="changeChapterOrig(1)" class="btn-nav">Вперед →</button>
+                </div>
+            </section>
+            
+            <!-- Заглушки -->
+            <section id="section-audio" class="tab-section"><div class="book-container-orig text-center pt-20 text-gray-500">Раздел Аудио в разработке</div></section>
+            <section id="section-manga" class="tab-section"><div class="book-container-orig text-center pt-20 text-gray-500">Раздел Манга в разработке</div></section>
         </main>
-
-        <!-- ПАНЕЛЬ УПРАВЛЕНИЯ -->
-        <div class="controls-bar">
-            <button onclick="changeChapterOrig(-1)" class="btn-nav">← Назад</button>
-            <span id="chapter-indicator" class="font-bold text-sm tracking-widest uppercase self-center" style="color: var(--text-main)">Вступление</span>
-            <button onclick="changeChapterOrig(1)" class="btn-nav">Вперед →</button>
-        </div>
     </div>
 
     <!-- ======================= РЕЖИМ КНИГИ (Overlay) ======================= -->
     <div id="book-view">
-        <div class="close-book-btn" onclick="toggleBookMode()"><i class="fa-solid fa-times"></i></div>
+        <div class="close-book-btn" onclick="toggleBookMode()"><i class="fa-solid fa-times"></i> ВЕРНУТЬСЯ</div>
         
         <div class="book-container-3d" id="book-3d">
             <div class="spiral hidden md:hidden block"></div> <!-- Спираль только для моб -->
             <!-- Страницы -->
         </div>
 
-        <!-- Навигация книги -->
-        <div class="absolute bottom-5 w-full flex justify-center gap-4 z-50">
-            <button onclick="flipBook(-1)" class="bg-black/50 text-white px-4 py-2 rounded-full backdrop-blur-sm hover:bg-[var(--accent)] transition">←</button>
-            <span id="book-page-info" class="text-[var(--text-main)] font-oswald bg-black/50 px-3 py-2 rounded">Стр. 1</span>
-            <button onclick="flipBook(1)" class="bg-black/50 text-white px-4 py-2 rounded-full backdrop-blur-sm hover:bg-[var(--accent)] transition">→</button>
+        <!-- ПК Навигация -->
+        <div class="book-nav-pc hidden md:flex">
+            <div class="scrubber" onclick="scrubBook(event)"><div class="scrubber-fill" id="scrubber-fill"></div></div>
+            <span id="book-page-info" class="text-white font-oswald text-sm">Стр. 1</span>
+        </div>
+        
+        <!-- Мобильная Навигация -->
+        <div class="mobile-nav-controls md:hidden">
+            <div class="nav-btn-mob" onclick="flipToPage(0)"><i class="fa-solid fa-list"></i></div>
+            <div class="mob-page-info" id="mob-page-info">1 / 10</div>
         </div>
     </div>
 
@@ -264,26 +347,58 @@
         let isBookMode = false;
         let bookPages = [];
         let currentBookPage = 0;
+        let totalBookPages = 0;
 
         // === ИНИЦИАЛИЗАЦИЯ ===
         window.onload = function() {
-            if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
+            // Проверка загрузки данных
+            if (typeof bookData === 'undefined') {
+                document.getElementById('original-content').innerHTML = `
+                    <div style="color:red; text-align:center;">
+                        <h2>Ошибка загрузки</h2>
+                        <p>Файл <b>books_data.js</b> не найден или содержит ошибки.</p>
+                        <p>Убедитесь, что оба файла лежат в одной папке.</p>
+                    </div>`;
+                return;
+            }
+
+            // Установка темы
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.add('dark-mode'); // По умолчанию темная для оригинала
+            }
             
             // Заполняем дропдаун
             const dropdown = document.getElementById('chapter-dropdown');
-            bookData.forEach((ch, i) => {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.innerText = ch.title;
-                dropdown.appendChild(opt);
-            });
+            if(dropdown) {
+                bookData.forEach((ch, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.innerText = ch.title;
+                    dropdown.appendChild(opt);
+                });
+            }
 
             loadOriginalChapter(0);
         };
 
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            document.body.classList.toggle('light-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active-section'));
+            document.getElementById('section-'+id).classList.add('active-section');
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active-tab'));
+            const btn = document.getElementById('tab-'+id);
+            if(btn) btn.classList.add('active-tab');
+            
+            const controls = document.getElementById('controls-read');
+            if(controls) controls.style.display = (id === 'read') ? 'flex' : 'none';
         }
 
         // === ОРИГИНАЛЬНЫЙ РЕЖИМ ===
@@ -295,17 +410,28 @@
             const chapter = bookData[index];
             const container = document.getElementById('original-content');
             
+            // Очищаем картинки для оригинала, убираем Tailwind классы если мешают
+            let cleanHtml = chapter.htmlContent
+                .replace(/<img[^>]*>/g, "<div class='text-center text-sm text-gray-500 my-4'>[Иллюстрация доступна в режиме Книги]</div>")
+                .replace(/text-gray-900/g, "") // Убираем жесткий черный цвет
+                .replace(/text-600/g, "text-[var(--text-muted)]");
+
             container.innerHTML = `
                 <div class="chapter-header">
                     <span class="chapter-number">ГЛАВА ${index}</span>
                     <h2 class="chapter-title">${chapter.title}</h2>
                 </div>
-                ${chapter.htmlContent}
+                ${cleanHtml}
             `;
             
-            document.getElementById('chapter-indicator').innerText = chapter.title;
-            document.getElementById('chapter-dropdown').value = index;
-            document.getElementById('progress-bar').style.width = ((index + 1) / bookData.length * 100) + "%";
+            const ind = document.getElementById('chapter-indicator');
+            if(ind) ind.innerText = index === 0 ? "Вступление" : `Глава ${index}`;
+            
+            const drop = document.getElementById('chapter-dropdown');
+            if(drop) drop.value = index;
+            
+            const bar = document.getElementById('progress-bar');
+            if(bar) bar.style.width = ((index + 1) / bookData.length * 100) + "%";
             
             window.scrollTo(0, 0);
         }
@@ -317,17 +443,19 @@
         // === РЕЖИМ КНИГИ ===
         function toggleBookMode() {
             const bookView = document.getElementById('book-view');
-            const origView = document.getElementById('original-view');
+            const btn = document.getElementById('main-book-btn');
             
             if (!isBookMode) {
                 // Включаем книгу
                 bookView.classList.add('active');
+                btn.classList.add('hidden-btn');
                 // Генерируем книгу если еще не создана
                 if (document.querySelectorAll('.paper').length === 0) generateBook();
                 isBookMode = true;
             } else {
                 // Выключаем
                 bookView.classList.remove('active');
+                btn.classList.remove('hidden-btn');
                 isBookMode = false;
             }
         }
@@ -342,22 +470,42 @@
 
             let allHtml = [];
             
-            // Нарезка контента (Упрощенная для стабильности)
+            // Оглавление
+            let tocHtml = `<div class="mt-10 text-center"><h1>ОГЛАВЛЕНИЕ</h1><ul class="toc-list text-left mt-4 pl-4">`;
+            bookData.forEach((ch, i) => {
+                const title = ch.title.split(':')[0];
+                tocHtml += `<li class="toc-item" onclick="jumpToChapter(${i})"><span>${title}</span><span>></span></li>`;
+            });
+            tocHtml += `</ul></div>`;
+            allHtml.push(tocHtml);
+            if(!isMobile) allHtml.push(""); // Пустая для разворота
+
+            // Нарезка контента
             bookData.forEach((ch, idx) => {
-                // Титул
-                allHtml.push(`<div class="chapter-title-page mt-10 text-center"><h1>${ch.title}</h1></div>`);
-                
-                // Текст (разбиваем грубо по блокам, на мобилках скролл спасет)
+                // Титул главы
+                allHtml.push(`<div class="mt-20 text-center"><span class="block text-sm font-oswald text-[var(--accent)] mb-4">ГЛАВА ${idx}</span><h1 class="font-cinzel text-2xl">${ch.title}</h1></div>`);
+                if(!isMobile) allHtml.push(""); // Пустая
+
+                // Текст
                 const temp = document.createElement('div');
                 temp.innerHTML = ch.htmlContent;
-                const blocks = Array.from(temp.children);
+                const blocks = Array.from(temp.querySelectorAll('p, h1, h2, h3, div, img'));
                 
                 let currentText = "";
                 let charCount = 0;
                 const LIMIT = isMobile ? 600 : 900;
 
                 blocks.forEach(el => {
-                    let html = el.outerHTML;
+                    if(el.tagName === 'IMG') {
+                        if(currentText) { allHtml.push(`<div class="book-content">${currentText}</div>`); }
+                        allHtml.push(`<div class="flex h-full items-center justify-center">${el.outerHTML}</div>`);
+                        currentText = ""; charCount = 0;
+                        return;
+                    }
+
+                    // Чистим классы
+                    let html = el.outerHTML.replace(/text-[^ ]+/g, "");
+                    
                     if(charCount + el.innerText.length > LIMIT) {
                         allHtml.push(`<div class="book-content">${currentText}</div>`);
                         currentText = ""; charCount = 0;
@@ -370,9 +518,9 @@
 
             // Рендер страниц
             const totalSheets = isMobile ? allHtml.length : Math.ceil(allHtml.length / 2);
-            
+            totalBookPages = totalSheets;
+
             for(let i=0; i<totalSheets; i++) {
-                const pageIdx = i;
                 const frontHTML = isMobile ? allHtml[i] : (allHtml[i*2] || "");
                 const backHTML = isMobile ? "" : (allHtml[i*2+1] || "");
 
@@ -384,7 +532,7 @@
                 paper.innerHTML = `
                     <div class="front">
                         ${frontHTML}
-                        <div class="absolute bottom-2 w-full text-center text-xs opacity-50">${isMobile ? i+1 : i*2+1}</div>
+                        <div class="absolute bottom-2 w-full text-center text-xs opacity-50 font-oswald pointer-events-none">${isMobile ? i+1 : i*2+1}</div>
                     </div>
                     <div class="back">
                         ${backHTML}
@@ -392,16 +540,26 @@
                 `;
                 
                 // Клик
-                paper.onclick = () => flipBookPage(i);
+                paper.onclick = (e) => {
+                    if(e.target.closest('.toc-item')) return;
+                    
+                    if(isMobile) {
+                        if(paper.classList.contains('flipped')) flipBookPage(i); // Вернуть
+                        else flipBookPage(i); // Листать
+                    } else {
+                        flipBookPage(i);
+                    }
+                };
                 
                 container.appendChild(paper);
             }
-            bookPages = document.querySelectorAll('.paper');
+            updateVisibility(0);
         }
 
         function flipBookPage(idx) {
             const paper = document.getElementById(`sheet-${idx}`);
-            const total = bookPages.length;
+            const total = totalBookPages;
+            const isMobile = window.innerWidth <= 850;
             
             if(paper.classList.contains('flipped')) {
                 // Назад
@@ -411,19 +569,63 @@
             } else {
                 // Вперед
                 paper.classList.add('flipped');
-                if(window.innerWidth <= 850) paper.style.zIndex = 0; // Мобилка: уходит вниз
-                else paper.style.zIndex = idx + 1; // ПК: ложится сверху слева
+                if(isMobile) paper.style.zIndex = 0; // Мобилка: уходит вниз
+                else paper.style.zIndex = idx + 1; 
                 currentBookPage = idx + 1;
             }
-            document.getElementById('book-page-info').innerText = `Стр. ${currentBookPage + 1}`;
+            updateVisibility(currentBookPage);
         }
 
-        function flipBook(dir) {
-            if (dir === 1 && currentBookPage < bookPages.length) {
-                flipBookPage(currentBookPage);
-            } else if (dir === -1 && currentBookPage > 0) {
-                flipBookPage(currentBookPage - 1);
+        function flipToPage(target) {
+            const papers = document.querySelectorAll('.paper');
+            const isMobile = window.innerWidth <= 850;
+            papers.forEach((p, i) => {
+                if(i < target) {
+                    p.classList.add('flipped');
+                    p.style.zIndex = isMobile ? 0 : i + 1;
+                } else {
+                    p.classList.remove('flipped');
+                    p.style.zIndex = totalBookPages - i;
+                }
+            });
+            currentBookPage = target;
+            updateVisibility(currentBookPage);
+        }
+
+        function jumpToChapter(val) {
+            // Упрощенная навигация: просто ищем страницу с заголовком главы
+            // В реальном проекте лучше хранить карту страниц
+            // Пока просто листаем на начало (или можно реализовать точный поиск)
+            flipToPage(val * 2); // Грубая оценка для примера
+        }
+
+        function updateVisibility(curr) {
+            // Показываем только соседние страницы для экономии памяти
+            const papers = document.querySelectorAll('.paper');
+            const range = 2;
+            papers.forEach((p, i) => {
+                if(i >= curr - range && i <= curr + range) {
+                    p.classList.add('visible');
+                } else {
+                    p.classList.remove('visible');
+                }
+            });
+
+            // UI
+            const isMobile = window.innerWidth <= 850;
+            if(!isMobile) {
+                document.getElementById('scrubber-fill').style.width = (curr / totalBookPages * 100) + "%";
+                document.getElementById('book-page-info').innerText = `Стр. ${curr*2+1}`;
+            } else {
+                document.getElementById('mob-page-info').innerText = `${curr+1} / ${totalBookPages}`;
             }
+        }
+
+        function scrubBook(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const pct = (e.clientX - rect.left) / rect.width;
+            const target = Math.floor(pct * totalBookPages);
+            flipToPage(target);
         }
 
     </script>
