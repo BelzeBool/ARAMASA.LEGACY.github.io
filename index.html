@@ -159,11 +159,10 @@
             padding: 50px 40px; box-sizing: border-box;
             backface-visibility: hidden; overflow: hidden;
             color: var(--ink-color);
-            /* Упрощенная тень для производительности */
             box-shadow: inset 3px 0px 10px rgba(0,0,0,0.05); 
         }
         .front { z-index: 2; border-radius: 0 5px 5px 0; }
-        .back { transform: rotateY(180deg); z-index: 1; border-radius: 5px 0 0 5px; background: #eee; } /* Простой фон сзади */
+        .back { transform: rotateY(180deg); z-index: 1; border-radius: 5px 0 0 5px; background: #eee; } 
         .paper.flipped { transform: rotateY(-180deg); z-index: 1; }
 
         .book-content { font-family: 'Crimson Text', serif; font-size: 19px; line-height: 1.6; text-align: justify; color: inherit; }
@@ -188,30 +187,34 @@
 
         /* Пружина (скрыта на ПК) */
         .notebook-spiral { display: none; }
+        .top-stack-indicator { display: none; }
 
-        /* === МОБИЛЬНАЯ ВЕРСИЯ (Optimized Notebook) === */
+        /* === МОБИЛЬНАЯ ВЕРСИЯ (Fixes) === */
         @media (max-width: 850px) {
-            :root { --book-width: 92vw; --book-height: 72vh; }
+            :root { --book-width: 92vw; --book-height: 70vh; }
             
             /* Блокнот */
-            .book-container { width: var(--book-width); height: var(--book-height); margin-top: 30px; }
+            .book-container { width: var(--book-width); height: var(--book-height); margin-top: 50px; }
             .book-cover-back { width: 100%; height: 100%; top: 5px; left: 0; background: #151515; }
             
             /* Листы */
             .paper { 
                 width: 100%; height: 100%; left: 0; top: 0;
                 transform-origin: top center; 
-                transition: transform 0.4s ease-out; /* Быстрее анимация */
+                transition: transform 0.4s ease-out;
             }
             
-            /* Упрощаем стили для производительности */
+            /* Лицевая сторона */
             .front { 
-                border-radius: 0 0 8px 8px; padding: 25px 20px; border-right: none;
+                border-radius: 0 0 8px 8px; 
+                padding: 25px 20px 80px 20px; /* Увеличен отступ снизу чтобы не перекрывало */
+                border-right: none;
                 background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
                 background-size: 100% 28px;
                 box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                overflow: hidden; /* Обрезаем всё лишнее */
             }
-            .back { display: none !important; } /* Полностью убираем заднюю сторону */
+            .back { display: none !important; }
             
             /* Пружина */
             .notebook-spiral {
@@ -223,30 +226,43 @@
             /* Анимация "Улетания" вверх */
             .paper.flipped {
                 transform: translateY(-120%) scale(0.9);
-                opacity: 0; /* Скрываем, чтобы не грузить GPU */
-                visibility: hidden; /* Убираем из рендера */
+                opacity: 0; 
+                visibility: hidden;
             }
             
             /* Визуальный стек сверху (для возврата) */
             .top-stack-indicator {
-                position: absolute; top: -40px; left: 0; width: 100%; height: 40px;
-                display: flex; justify-content: center; align-items: flex-end;
-                z-index: 200; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+                display: flex;
+                position: absolute; top: 10px; left: 0; width: 100%; height: 40px;
+                justify-content: center; align-items: flex-end;
+                z-index: 300; pointer-events: none; opacity: 0; transition: opacity 0.3s;
             }
             #new-interface.has-history .top-stack-indicator { opacity: 1; pointer-events: auto; cursor: pointer; }
+            
             .folded-page {
-                width: 90%; height: 15px; background: #d4d0c0; border-radius: 5px 5px 0 0;
-                border: 1px solid rgba(0,0,0,0.1); margin-bottom: -5px; box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+                width: 85%; height: 12px; background: #d4d0c0; border-radius: 5px 5px 0 0;
+                border: 1px solid rgba(0,0,0,0.1); margin-bottom: -5px; box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+                position: relative;
+            }
+            .folded-page::after {
+                content: 'ВЕРНУТЬ СТРАНИЦУ'; position: absolute; top: -15px; width: 100%; text-align: center;
+                font-family: 'Oswald'; font-size: 10px; color: #aaa; letter-spacing: 2px;
             }
 
-            .book-content { font-size: 17px; line-height: 1.5; }
+            .book-content { font-size: 16px; line-height: 1.5; }
             .book-content h1 { font-size: 22px !important; }
             
             /* Кнопки и интерфейс */
             #new-interface { padding-top: 0; }
             .promo-btn { bottom: 20px; right: 20px; font-size: 0.7rem; padding: 10px 15px; border-radius: 30px; }
-            .book-bottom-panel { bottom: 15px; padding: 0 20px; width: 100%; flex-direction: row; justify-content: space-between; }
+            .book-bottom-panel { 
+                bottom: 10px; padding: 10px 20px; width: 100%; 
+                flex-direction: row; justify-content: space-between;
+                background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); /* Подложка */
+                border-radius: 10px;
+            }
             .scrubber-track { width: 40%; }
+            .page-info { font-size: 10px; opacity: 0.9; color: white !important; } /* Белый текст на подложке */
             
             /* Старый интерфейс */
             .px-4 { padding-left: 15px; padding-right: 15px; }
@@ -265,7 +281,7 @@
     <button class="theme-toggle" onclick="toggleTheme()" title="Сменить тему"><i class="fa-solid fa-circle-half-stroke"></i></button>
     
     <div id="promo-btn" class="promo-btn" onclick="toggleNewInterface()">
-        <i class="fa-solid fa-book-open"></i> ЧИТАТЬ КАК КНИГУ
+        <i class="fa-solid fa-book-open"></i> <span class="hidden md:inline ml-2">ЧИТАТЬ КАК КНИГУ</span>
     </div>
 
     <button id="return-btn" class="return-btn" onclick="toggleNewInterface()">
@@ -306,7 +322,6 @@
         <!-- Индикатор стопки (Мобильный возврат) -->
         <div class="top-stack-indicator" onclick="handleMobileReturn()">
             <div class="folded-page"></div>
-            <div class="absolute text-xs font-oswald text-gray-500 mb-1">НАЗАД</div>
         </div>
 
         <div class="book-container" id="book">
@@ -320,7 +335,7 @@
             <div class="scrubber-track" onclick="scrubBook(event)">
                 <div class="scrubber-fill" id="scrubber-fill"></div>
             </div>
-            <div class="page-info" id="page-info" style="color: var(--text-main); font-size: 12px; font-family: 'Oswald'; white-space: nowrap;">Стр. 1</div>
+            <div class="page-info" id="page-info" style="font-family: 'Oswald'; white-space: nowrap;">1</div>
         </div>
     </div>
 
@@ -484,7 +499,7 @@
                 let currentText = "";
                 let charCount = 0;
                 // Очень строгий лимит для мобилок, чтобы текст не вылезал
-                const CHAR_LIMIT = isMobile ? 280 : 450; 
+                const CHAR_LIMIT = isMobile ? 210 : 450; 
 
                 elements.forEach((el, i) => {
                     // Обработка картинок
@@ -638,7 +653,7 @@
             // Скраббер
             const total = sheets.length;
             document.getElementById('scrubber-fill').style.width = (current / total * 100) + "%";
-            document.getElementById('page-info').innerText = `Стр. ${isMobile() ? current+1 : current*2+1}`;
+            document.getElementById('page-info').innerText = `${isMobile() ? current+1 : current*2+1}`;
             
             // Синхронизация главы
             const realPage = isMobile() ? current : current * 2;
