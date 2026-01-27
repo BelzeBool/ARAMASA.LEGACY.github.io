@@ -11,18 +11,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     
     <style>
-        /* === ГЛОБАЛЬНЫЕ СТИЛИ (ТЕМНАЯ ТЕМА ПО УМОЛЧАНИЮ) === */
+        /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
         :root {
-            --bg-body: #050505;       /* Глубокий черный */
-            --bg-content: #0a0a0a;    /* Чуть светлее для фона текста */
-            --text-main: #d4d4d4;     /* Светло-серый для чтения */
-            --accent-red: #8a1c1c;    /* Фирменный красный */
-            --border-color: #262626;  /* Цвет рамок */
+            /* ТЕМНАЯ ТЕМА (ПО УМОЛЧАНИЮ) */
+            --bg-body: #050505;
+            --bg-content: #0a0a0a;
+            --text-main: #d4d4d4;
+            --accent-red: #8a1c1c;
+            --border-color: #262626;
+            --nav-bg: rgba(10, 10, 10, 0.95);
             
             /* Настройки Книги */
             --book-width: 420px;
             --book-height: 600px;
-            --paper-color: #f3ebd8;   /* Цвет бумаги */
+            --paper-color: #f3ebd8;
+        }
+
+        /* СВЕТЛАЯ ТЕМА */
+        body.light-mode {
+            --bg-body: #f3f4f6;
+            --bg-content: #ffffff;
+            --text-main: #1f2937;
+            --border-color: #e5e7eb;
+            --nav-bg: rgba(255, 255, 255, 0.95);
         }
 
         body { 
@@ -31,12 +42,12 @@
             color: var(--text-main); 
             overflow-x: hidden;
             margin: 0;
+            transition: background-color 0.5s, color 0.5s;
         }
 
-        /* --- Типографика "Старого" интерфейса --- */
+        /* --- Типографика --- */
         h1, h2, h3, .font-oswald { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Красивая буквица */
         .drop-cap::first-letter { 
             font-family: 'Lora', serif; font-size: 3.5rem; float: left; 
             margin-right: 0.5rem; line-height: 0.8; color: var(--accent-red); 
@@ -45,18 +56,18 @@
         
         p { margin-bottom: 1.5rem; text-align: justify; line-height: 1.9; }
         
-        /* Стиль диалогов */
         p.dialogue { 
             margin-left: 1rem; 
             border-left: 3px solid var(--accent-red); 
             padding-left: 1rem; 
             font-style: italic; 
-            color: #a3a3a3;
+            color: inherit;
+            opacity: 0.9;
         }
 
-        /* === КНОПКА "НОВЫЙ ИНТЕРФЕЙС" (СЛЕВА СВЕРХУ) === */
+        /* === КНОПКА "НОВЫЙ ИНТЕРФЕЙС" (Сдвинута ниже) === */
         .promo-btn {
-            position: fixed; top: 30px; left: 30px; z-index: 200;
+            position: fixed; top: 110px; left: 30px; z-index: 200; /* Сдвинул ниже */
             background: rgba(0,0,0,0.5); 
             border: 1px solid var(--accent-red);
             color: var(--accent-red);
@@ -72,18 +83,24 @@
             box-shadow: 0 0 20px rgba(138, 28, 28, 0.6); 
             transform: scale(1.05);
         }
-        
-        /* Когда кнопка улетает */
         .promo-btn.moved {
-            transform: translateX(-200px) rotate(-90deg);
-            opacity: 0;
-            pointer-events: none;
+            transform: translateX(-300px);
+            opacity: 0; pointer-events: none;
         }
 
-        /* Кнопка "ВЕРНУТЬ СТАРЫЙ" */
+        /* === КНОПКА ТЕМЫ (Справа Сверху) === */
+        .theme-toggle {
+            position: fixed; top: 25px; right: 30px; z-index: 210;
+            background: transparent; border: none; cursor: pointer;
+            color: var(--text-main); font-size: 1.2rem;
+            transition: transform 0.3s, color 0.3s;
+        }
+        .theme-toggle:hover { transform: rotate(15deg); color: var(--accent-red); }
+
+        /* === КНОПКА ВОЗВРАТА === */
         .return-btn {
             position: absolute; top: 30px; left: 30px; z-index: 200;
-            background: transparent; color: #555;
+            background: rgba(0,0,0,0.8); color: white;
             border: 1px solid #555;
             padding: 8px 16px; font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 1px;
             cursor: pointer; transition: 0.3s;
@@ -93,49 +110,69 @@
         .return-btn.visible { opacity: 1; pointer-events: auto; }
 
 
-        /* === СТАРЫЙ ИНТЕРФЕЙС (КОНТЕЙНЕР) === */
+        /* === СТАРЫЙ ИНТЕРФЕЙС === */
         #old-interface {
             transition: opacity 0.5s ease;
             width: 100%; min-height: 100vh;
             position: relative;
         }
         
-        /* Хедер сайта */
         .site-header {
-            background-color: rgba(10, 10, 10, 0.95);
+            background-color: var(--nav-bg);
             border-bottom: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
+            transition: background-color 0.5s;
         }
 
-        /* Блок с текстом */
         .content-card {
             background-color: var(--bg-content);
             border: 1px solid var(--border-color);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            transition: background-color 0.5s, border-color 0.5s;
         }
         
-        /* Эффект разлета (shatter) */
         .shatter-element { 
             transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease; 
             will-change: transform, opacity;
+        }
+
+        /* Выпадающий список глав */
+        .chapter-select {
+            background: transparent;
+            color: var(--accent-red);
+            font-family: 'Oswald', sans-serif;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            text-align: center;
+            cursor: pointer;
+            outline: none;
+            padding: 5px;
+        }
+        .chapter-select option {
+            background: var(--bg-content);
+            color: var(--text-main);
+            font-family: sans-serif;
+            font-size: 14px;
         }
 
 
         /* === НОВЫЙ ИНТЕРФЕЙС (КНИГА) === */
         #new-interface {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #1a1510; /* Стол */
+            background-color: #1a1510;
             background-image: radial-gradient(circle at center, #2e241d 0%, #0d0a08 100%);
             z-index: 100;
             transform: translateY(-100%);
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex; justify-content: center; align-items: center;
             overflow: hidden;
-            perspective: 1500px; /* Для 3D */
+            perspective: 1500px;
         }
         #new-interface.active { transform: translateY(0); }
 
-        /* Контейнер книги */
         .book-container {
             position: relative;
             width: calc(var(--book-width) * 2);
@@ -144,26 +181,22 @@
             transition: transform 0.5s;
         }
         
-        /* Лист бумаги */
         .paper {
             position: absolute; width: var(--book-width); height: var(--book-height);
-            top: 0; left: var(--book-width); /* Все листы справа */
-            transform-origin: left center; /* Вращение от корешка */
-            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1); /* Плавное перелистывание */
+            top: 0; left: var(--book-width);
+            transform-origin: left center;
+            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
             transform-style: preserve-3d;
-            z-index: 1; 
-            cursor: pointer;
+            z-index: 1; cursor: pointer;
         }
         
-        /* Стороны листа */
         .front, .back {
             position: absolute; width: 100%; height: 100%;
             background-color: var(--paper-color);
             padding: 40px 30px; box-sizing: border-box;
-            backface-visibility: hidden; /* Скрываем "изнанку" */
-            overflow: hidden;
-            color: #2c2c2c; /* Чернила */
-            box-shadow: inset 3px 0px 20px rgba(0,0,0,0.1); /* Тень у корешка */
+            backface-visibility: hidden; overflow: hidden;
+            color: #2c2c2c;
+            box-shadow: inset 3px 0px 20px rgba(0,0,0,0.1);
         }
         
         .front { z-index: 2; }
@@ -173,30 +206,49 @@
             background-image: linear-gradient(to right, rgba(0,0,0,0.1), transparent 10%);
         }
         
-        /* Класс перевернутой страницы */
         .paper.flipped { transform: rotateY(-180deg); z-index: 1; }
 
-        /* Текст внутри книги */
         .book-content { font-family: 'Crimson Text', serif; font-size: 19px; line-height: 1.5; text-align: justify; }
         .book-content p { margin-bottom: 10px; text-indent: 20px; }
-        .book-content h1, .book-content h2, .book-content h3 { font-family: 'Oswald'; text-align: center; color: black; margin-bottom: 20px; }
+        .book-content h1, .book-content h2 { font-family: 'Oswald'; text-align: center; color: black; margin-bottom: 20px; }
         
-        /* Обложка (задняя часть) */
         .book-cover-back {
             position: absolute; width: calc(var(--book-width) * 2 + 40px); height: calc(var(--book-height) + 20px);
             top: -10px; left: -20px; background: #3d0d0d; border-radius: 4px;
             transform: translateZ(-2px); box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
 
+        /* ЗАКЛАДКА (RIBBON) */
+        .bookmark-ribbon {
+            position: absolute; top: -10px; right: 20px;
+            width: 30px; height: 50px;
+            background: var(--accent-red);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+            transform: translateY(-100%); /* Спрятана */
+            transition: transform 0.3s;
+            cursor: pointer;
+            z-index: 10;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+        }
+        .bookmark-ribbon.active { transform: translateY(0); }
+        /* Зона клика для закладки (невидимая область) */
+        .bookmark-trigger {
+            position: absolute; top: 0; right: 0; width: 60px; height: 60px;
+            z-index: 9; cursor: pointer;
+        }
+        .bookmark-trigger:hover + .bookmark-ribbon:not(.active) {
+            transform: translateY(-60%); /* Чуть выглядывает при наведении */
+        }
+
         /* Мобильная версия */
         @media (max-width: 850px) {
             :root { --book-width: 92vw; --book-height: 70vh; }
             .book-container { width: var(--book-width); }
-            .paper { left: 0; } /* На мобилке одна стопка */
+            .paper { left: 0; }
             .front { border-radius: 0 5px 5px 0; }
             #new-interface { padding-top: 20px; align-items: flex-start; margin-top: 40px; }
             .promo-btn { top: auto; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; text-align: center; }
-            .promo-btn.moved { transform: translateX(-50%) translateY(200px); }
+            .theme-toggle { top: 20px; right: 20px; }
         }
     </style>
 </head>
@@ -204,6 +256,11 @@
 
     <!-- Подключаем базу данных -->
     <script src="books_data.js"></script>
+
+    <!-- КНОПКА ТЕМЫ -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+        🌗
+    </button>
 
     <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ (РЕКЛАМНАЯ) -->
     <div id="promo-btn" class="promo-btn" onclick="toggleNewInterface()">
@@ -215,17 +272,17 @@
         ← ВЕРНУТЬ ОБЫЧНЫЙ ВИД
     </button>
 
-    <!-- === СТАРЫЙ ИНТЕРФЕЙС (DARK ORIGINAL) === -->
+    <!-- === СТАРЫЙ ИНТЕРФЕЙС === -->
     <div id="old-interface">
         
         <nav class="shatter-element sticky top-0 z-40 site-header">
             <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-                <div class="text-2xl md:text-3xl font-bold font-oswald text-white tracking-widest ml-0 md:ml-0">
+                <div class="text-2xl md:text-3xl font-bold font-oswald text-white tracking-widest ml-0 md:ml-0" style="color: var(--text-main)">
                     ARAMASA<span class="text-[#8a1c1c]">.LEGACY</span>
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <span class="text-xs font-bold text-[#8a1c1c] border-b border-[#8a1c1c] cursor-pointer tracking-[0.2em] py-1">ЧИТАТЬ</span>
-                    <span class="text-xs font-bold text-gray-600 cursor-not-allowed tracking-[0.2em] py-1">АРХИВ</span>
+                    <span class="text-xs font-bold tracking-[0.2em] py-1 opacity-50 cursor-not-allowed">АРХИВ</span>
                 </div>
             </div>
         </nav>
@@ -236,17 +293,20 @@
             </div>
         </main>
         
-        <!-- Футер навигации -->
-        <div class="shatter-element fixed bottom-0 w-full bg-[#050505] border-t border-[#262626] p-6 z-30">
+        <!-- Футер навигации (с выпадающим списком) -->
+        <div class="shatter-element fixed bottom-0 w-full border-t p-6 z-30" style="background-color: var(--bg-body); border-color: var(--border-color);">
             <div class="max-w-4xl mx-auto flex justify-between items-center">
-                <button onclick="changeChapter(-1)" class="text-gray-500 hover:text-white font-oswald text-xs md:text-sm tracking-[0.15em] uppercase transition">
-                    ← Предыдущая
+                <button onclick="changeChapter(-1)" class="opacity-70 hover:opacity-100 font-oswald text-xs md:text-sm tracking-[0.15em] uppercase transition">
+                    ← Пред.
                 </button>
-                <span id="chapter-label" class="font-bold text-[#8a1c1c] font-oswald text-sm md:text-lg tracking-widest uppercase">
-                    Загрузка...
-                </span>
-                <button onclick="changeChapter(1)" class="text-gray-500 hover:text-white font-oswald text-xs md:text-sm tracking-[0.15em] uppercase transition">
-                    Следующая →
+                
+                <!-- ВЫБОР ГЛАВЫ -->
+                <select id="chapter-select" class="chapter-select" onchange="loadChapter(parseInt(this.value))">
+                    <!-- Опции генерируются JS -->
+                </select>
+
+                <button onclick="changeChapter(1)" class="opacity-70 hover:opacity-100 font-oswald text-xs md:text-sm tracking-[0.15em] uppercase transition">
+                    След. →
                 </button>
             </div>
         </div>
@@ -261,7 +321,7 @@
         </div>
         
         <div class="absolute bottom-10 text-white/20 text-[10px] font-oswald tracking-widest pointer-events-none uppercase">
-            Нажмите на край страницы чтобы перелистнуть
+            Автосохранение включено • Клик по краю для листания
         </div>
     </div>
 
@@ -282,11 +342,39 @@
         // === ПЕРЕМЕННЫЕ ===
         let currentChapterIndex = 0;
         let isNewInterface = false;
+        let bookmarkedPages = {}; // Хранение закладок: { chapterId: pageIndex }
 
         function initApp() {
+            // Восстанавливаем тему
+            if (localStorage.getItem('aramasa_theme') === 'light') {
+                document.body.classList.add('light-mode');
+            }
+
+            // Восстанавливаем главу
             const saved = localStorage.getItem('aramasa_chapter');
             if (saved) currentChapterIndex = parseInt(saved);
+            
+            // Восстанавливаем закладки
+            const savedBookmarks = localStorage.getItem('aramasa_bookmarks');
+            if (savedBookmarks) bookmarkedPages = JSON.parse(savedBookmarks);
+
+            // Генерируем список глав
+            const select = document.getElementById('chapter-select');
+            bookData.forEach((chapter, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.innerText = (index === 0) ? "ВСТУПЛЕНИЕ" : `ГЛАВА ${index}`;
+                select.appendChild(opt);
+            });
+
             loadChapter(currentChapterIndex);
+        }
+
+        // === ПЕРЕКЛЮЧЕНИЕ ТЕМЫ ===
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('aramasa_theme', isLight ? 'light' : 'dark');
         }
 
         // === ЗАГРУЗКА ГЛАВЫ ===
@@ -297,20 +385,23 @@
             currentChapterIndex = index;
             const chapter = bookData[index];
 
+            // Обновляем селект
+            document.getElementById('chapter-select').value = index;
+
             // 1. Обновляем Старый Интерфейс
             const oldArea = document.getElementById('old-content-area');
             
-            // Фильтруем классы Tailwind, которые могут портить темную тему (если они есть в data)
+            // Очистка от жестких цветов (для поддержки светлой темы)
             let safeContent = chapter.htmlContent
-                .replace(/text-gray-900/g, "text-gray-200")
-                .replace(/text-gray-600/g, "text-gray-400");
+                .replace(/text-gray-900/g, "")
+                .replace(/text-gray-600/g, "opacity-80")
+                .replace(/text-white/g, "");
             
             oldArea.innerHTML = `
-                <h2 class="text-3xl md:text-5xl font-bold font-oswald text-white mb-12 pb-6 border-b border-[#262626] tracking-wide">${chapter.title}</h2>
+                <h2 class="text-3xl md:text-5xl font-bold font-oswald mb-12 pb-6 border-b border-gray-700 tracking-wide">${chapter.title}</h2>
                 <div class="chapter-text">${safeContent}</div>
             `;
             
-            document.getElementById('chapter-label').innerText = chapter.title;
             window.scrollTo(0,0);
             localStorage.setItem('aramasa_chapter', index);
             
@@ -324,7 +415,7 @@
             loadChapter(currentChapterIndex + dir);
         }
 
-        // === ПЕРЕКЛЮЧЕНИЕ ИНТЕРФЕЙСА (ВЗРЫВ) ===
+        // === ПЕРЕКЛЮЧЕНИЕ ИНТЕРФЕЙСА ===
         function toggleNewInterface() {
             const oldUI = document.getElementById('old-interface');
             const newUI = document.getElementById('new-interface');
@@ -338,12 +429,10 @@
                 
                 promoBtn.classList.add('moved');
                 
-                // Разлет
                 shatterEls.forEach(el => {
                     const randX = (Math.random() - 0.5) * window.innerWidth * 1.5;
                     const randY = (Math.random() - 0.5) * window.innerHeight * 1.5;
                     const randRot = (Math.random() - 0.5) * 60;
-                    
                     el.style.transform = `translate(${randX}px, ${randY}px) rotate(${randRot}deg)`;
                     el.style.opacity = '0';
                     el.style.pointerEvents = 'none';
@@ -373,21 +462,19 @@
             }
         }
 
-        // === ЛОГИКА 3D КНИГИ (ПЕРЕЛИСТЫВАНИЕ) ===
+        // === ЛОГИКА 3D КНИГИ ===
         function prepareBook(index) {
             const chapter = bookData[index];
             const bookEl = document.getElementById('book');
             bookEl.innerHTML = '<div class="book-cover-back"></div>';
             
-            // Парсинг контента
             const temp = document.createElement('div');
             temp.innerHTML = chapter.htmlContent;
-            // Берем всё: заголовки, параграфы, дивы
             const elements = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, div, blockquote'));
             
             let pagesHtml = [];
             
-            // Титульная страница
+            // Титульник
             pagesHtml.push(`
                 <div style="height:100%; display:flex; flex-direction:column; justify-content:center; text-align:center;">
                     <div style="font-family:'Oswald'; font-size:10px; letter-spacing:4px; color:#888; margin-bottom:30px;">ARAMASA LEGACY</div>
@@ -398,18 +485,16 @@
             
             let currentText = "";
             let charCount = 0;
-            const CHAR_LIMIT = 550; // Символов на страницу
+            const CHAR_LIMIT = 550;
 
             elements.forEach((el, i) => {
-                // Очистка от темных классов для светлой бумаги
                 let html = el.outerHTML
                     .replace(/text-gray-900/g, "text-black")
-                    .replace(/text-gray-200/g, "text-black") // если пришли из dark mode
+                    .replace(/text-gray-200/g, "text-black")
                     .replace(/text-white/g, "text-black");
 
                 const textLen = el.innerText.length;
 
-                // Если заголовок или уже много текста -> новая страница
                 if ((el.tagName.match(/H[1-6]/) && charCount > 100) || (charCount + textLen > CHAR_LIMIT)) {
                     if (currentText) {
                         pagesHtml.push(`<div class="book-content">${currentText}</div>`);
@@ -417,32 +502,36 @@
                         charCount = 0;
                     }
                 }
-                
                 currentText += html;
                 charCount += textLen;
-                
-                if (i === elements.length - 1 && currentText) {
-                    pagesHtml.push(`<div class="book-content">${currentText}</div>`);
-                }
+                if (i === elements.length - 1 && currentText) pagesHtml.push(`<div class="book-content">${currentText}</div>`);
             });
 
-            if (pagesHtml.length % 2 !== 0) pagesHtml.push(""); // Четное кол-во
+            if (pagesHtml.length % 2 !== 0) pagesHtml.push("");
 
-            // Создаем листы
             const sheets = Math.ceil(pagesHtml.length / 2);
             
+            // Проверяем сохраненную страницу для этой главы
+            let savedPage = 0;
+            if (bookmarkedPages[index] !== undefined) savedPage = bookmarkedPages[index];
+
             for(let i=0; i<sheets; i++) {
                 const frontContent = pagesHtml[i*2] || "";
                 const backContent = pagesHtml[i*2+1] || "";
                 
                 const paper = document.createElement('div');
                 paper.className = 'paper';
-                paper.style.zIndex = sheets - i; // Z-index в обратном порядке
+                paper.style.zIndex = sheets - i;
                 paper.id = `paper-${i}`;
                 
-                // HTML листа
+                // Проверяем, стоит ли закладка на этой странице
+                const isBookmarked = (savedPage === i * 2) || (savedPage === i * 2 + 1);
+                const ribbonClass = isBookmarked ? "bookmark-ribbon active" : "bookmark-ribbon";
+
                 paper.innerHTML = `
                     <div class="front">
+                        <div class="bookmark-trigger" onclick="toggleBookmark(event, ${index}, ${i*2})"></div>
+                        <div class="${ribbonClass}" id="bm-${i*2}"></div>
                         <div style="height:100%;">${frontContent}</div>
                         <div style="position:absolute; bottom:15px; width:100%; text-align:center; font-size:10px; color:#888; font-family:'Oswald'; left:0;">${i*2+1}</div>
                     </div>
@@ -452,22 +541,51 @@
                     </div>
                 `;
                 
-                // Клик для перелистывания
-                paper.onclick = function() {
-                    // Если лист уже перевернут - возвращаем (если это верхний перевернутый)
-                    // Если лист не перевернут - переворачиваем
+                // Перелистывание
+                paper.addEventListener('click', function(e) {
+                    if(e.target.classList.contains('bookmark-trigger')) return; // Игнорим клик по закладке
+
                     if (this.classList.contains('flipped')) {
                         this.classList.remove('flipped');
-                        // Возвращаем z-index
                         setTimeout(() => this.style.zIndex = sheets - i, 400); 
+                        // Сохраняем страницу (левую)
+                        saveProgress(index, (i - 1) * 2); 
                     } else {
                         this.classList.add('flipped');
-                        // Меняем z-index чтобы перекрывать предыдущие
-                        this.style.zIndex = i + 1; 
+                        this.style.zIndex = i + 1;
+                        // Сохраняем страницу (правую, новую открытую)
+                        saveProgress(index, (i + 1) * 2);
                     }
-                };
+                });
                 
                 bookEl.appendChild(paper);
+
+                // Если это сохраненная страница, листаем до неё
+                if (i * 2 < savedPage) {
+                    // Сразу переворачиваем без анимации (или с быстрой)
+                    paper.classList.add('flipped');
+                    paper.style.zIndex = i + 1;
+                }
+            }
+        }
+
+        function saveProgress(chapterIdx, pageIdx) {
+            if (pageIdx < 0) pageIdx = 0;
+            // Просто сохраняем текущий прогресс для открытия в будущем
+            // Это "автоматическая закладка"
+            bookmarkedPages[chapterIdx] = pageIdx;
+            localStorage.setItem('aramasa_bookmarks', JSON.stringify(bookmarkedPages));
+        }
+
+        function toggleBookmark(e, chapterIdx, pageIdx) {
+            e.stopPropagation(); // Не листать
+            const ribbon = document.getElementById(`bm-${pageIdx}`);
+            ribbon.classList.toggle('active');
+            
+            // Если активна, можно сохранить как "важную" закладку, 
+            // но пока мы используем ту же систему для автосохранения
+            if(ribbon.classList.contains('active')) {
+                saveProgress(chapterIdx, pageIdx);
             }
         }
 
