@@ -2,863 +2,353 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Хроники Клана Арамаса</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- НАСТРОЙКИ ТЕМ (CSS Переменные) --- */
+        /* --- БАЗОВЫЕ НАСТРОЙКИ (ОРИГИНАЛЬНЫЙ СТИЛЬ) --- */
         :root {
             --bg-main: #f9f7f1;
-            --bg-card: #ffffff;
             --text-main: #1a1a1a;
-            --text-muted: #5a5a5a;
+            --card-bg: #ffffff;
             --accent: #991b1b;
-            --border: #e5e5e5;
-            --nav-bg: rgba(255, 255, 255, 0.98);
-            --drop-cap: #991b1b;
+            --border: #e5e7eb;
+            
+            /* Для книги */
+            --book-width: 400px;
+            --book-height: 580px;
+            --paper-color: #f3ebd8;
         }
 
+        /* Темная тема (активируется классом .dark-mode на body) */
         body.dark-mode {
-            --bg-main: #121212;
-            --bg-card: #1e1e1e;
+            --bg-main: #0f0f0f;
             --text-main: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --accent: #ff4d4d;
-            --border: #333333;
-            --nav-bg: rgba(30, 30, 30, 0.98);
-            --drop-cap: #ff4d4d;
+            --card-bg: #161616;
+            --border: #333;
         }
 
-        /* --- ОСНОВНЫЕ СТИЛИ --- */
-        body {
-            font-family: 'Merriweather', serif;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            line-height: 2.2;
-            font-size: 20px;
+        body { 
+            font-family: 'Merriweather', serif; 
+            background-color: var(--bg-main); 
+            color: var(--text-main); 
             overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s, color 0.3s;
         }
-
-        h1, h2, h3, .font-oswald { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
-
-        /* --- ВКЛАДКИ --- */
-        .tab-section { display: none; animation: fadeIn 0.4s ease-out; }
-        .tab-section.active-section { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- КНИГА --- */
-        .book-container {
-            max-width: 900px;
-            margin: 2rem auto 8rem;
-            padding: 4rem 5rem;
-            background: var(--bg-card);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            min-height: 80vh;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-
-        .chapter-content { display: none; }
-        .chapter-content.active-chapter { display: block; animation: fadeIn 0.6s ease; }
-
+        
         /* Типографика */
-        .chapter-header { text-align: center; margin-bottom: 4rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
-        .chapter-number { font-family: 'Oswald', sans-serif; font-size: 0.9rem; letter-spacing: 0.3em; color: var(--accent); display: block; margin-bottom: 1rem; font-weight: 700; }
-        .chapter-title { font-family: 'Lora', serif; font-size: 3rem; font-weight: 700; line-height: 1.1; }
+        h1, h2, h3, .font-oswald { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+        .drop-cap::first-letter { 
+            font-family: 'Lora', serif; font-size: 3.5rem; float: left; 
+            margin-right: 0.5rem; line-height: 0.8; color: var(--accent); 
+        }
+        p { margin-bottom: 1.5rem; text-align: justify; line-height: 1.8; }
+        p.dialogue { margin-left: 1rem; border-left: 3px solid var(--accent); padding-left: 1rem; font-style: italic; }
+
+        /* --- КНОПКИ УПРАВЛЕНИЯ --- */
+        .control-panel {
+            position: fixed; top: 20px; left: 20px; z-index: 200;
+            display: flex; gap: 10px;
+        }
         
-        .drop-cap::first-letter { font-family: 'Lora', serif; font-size: 5rem; font-weight: 700; float: left; margin-right: 1rem; margin-top: -0.5rem; line-height: 0.8; color: var(--drop-cap); }
+        .btn-ui {
+            background: var(--accent); color: white;
+            padding: 8px 16px; font-family: 'Oswald', sans-serif;
+            font-size: 0.8rem; letter-spacing: 1px;
+            cursor: pointer; border-radius: 4px; border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .btn-ui:hover { transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0,0,0,0.15); }
         
-        p { margin-bottom: 1.8rem; text-align: justify; }
-        p.dialogue { margin-left: 2rem; position: relative; }
-        p.dialogue::before { content: '—'; position: absolute; left: -1.5rem; color: var(--accent); font-weight: bold; }
-        .thought { font-style: italic; color: var(--text-muted); }
+        .btn-toggle-dark {
+            background: #333;
+        }
+        body.dark-mode .btn-toggle-dark { background: #f9f7f1; color: #333; }
 
-        /* --- ЗАГЛУШКА --- */
-        .stub-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem 0;
-            opacity: 0.7;
+        /* Скрытие кнопок при активном новом интерфейсе */
+        .control-panel.hidden-ui { opacity: 0; pointer-events: none; }
+
+        /* --- СТАРЫЙ ИНТЕРФЕЙС --- */
+        #old-interface {
+            transition: opacity 0.5s ease;
+            width: 100%; min-height: 100vh;
         }
-        .stub-line {
-            width: 60px;
-            height: 4px;
-            background-color: var(--accent);
-            margin-bottom: 1.5rem;
-        }
-        .stub-text {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.5rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-        }
-        .stub-sub {
-            font-family: 'Merriweather', serif;
-            font-style: italic;
-            font-size: 1rem;
-            color: var(--text-muted);
+        .old-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
         }
 
-        /* --- НАВИГАЦИЯ --- */
-        .nav-link { cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid transparent; transition: all 0.3s; color: var(--text-muted); }
-        .nav-link.active-tab { color: var(--accent); border-bottom-color: var(--accent); }
-        .nav-link:hover { color: var(--accent); }
+        /* --- ЭФФЕКТ "ВЗРЫВА" --- */
+        .shatter-element { transition: transform 0.8s ease-in, opacity 0.6s ease; }
 
-        .controls-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--nav-bg); backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border); padding: 1.5rem;
-            display: flex; justify-content: center; gap: 2rem;
-            z-index: 50; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-            transition: background-color 0.3s ease;
+
+        /* --- НОВЫЙ ИНТЕРФЕЙС (КНИГА НА СТОЛЕ) --- */
+        #new-interface {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #1a1510; /* Темный стол */
+            background-image: radial-gradient(circle at center, #2e2620 0%, #0a0806 100%);
+            z-index: 100;
+            transform: translateY(-100%);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            perspective: 1500px;
+        }
+        #new-interface.active { transform: translateY(0); }
+
+        /* Стили книги */
+        .book-container {
+            position: relative;
+            width: calc(var(--book-width) * 2);
+            height: var(--book-height);
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .paper {
+            position: absolute; width: var(--book-width); height: var(--book-height);
+            top: 0; left: var(--book-width);
+            transform-origin: left center;
+            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d;
+            z-index: 1; cursor: pointer;
+        }
+        
+        .front, .back {
+            position: absolute; width: 100%; height: 100%;
+            background-color: var(--paper-color);
+            padding: 40px 30px; box-sizing: border-box;
+            backface-visibility: hidden; overflow: hidden;
+            box-shadow: inset 5px 0 10px rgba(0,0,0,0.05);
+            color: #2c2c2c; /* Всегда темный текст на бумаге */
+        }
+        .back { transform: rotateY(180deg); background-image: linear-gradient(to left, rgba(0,0,0,0.05), transparent); }
+        .front { background-image: linear-gradient(to right, rgba(0,0,0,0.05), transparent); }
+        .paper.flipped { transform: rotateY(-180deg); }
+
+        .book-content { font-family: 'Crimson Text', serif; font-size: 18px; line-height: 1.6; text-align: justify; }
+        .book-cover-back {
+            position: absolute; width: calc(var(--book-width) * 2 + 40px); height: calc(var(--book-height) + 20px);
+            top: -10px; left: -20px; background: #3d0d0d; border-radius: 5px;
+            transform: translateZ(-2px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        .btn-nav {
-            background: var(--bg-card); border: 1px solid var(--border);
-            color: var(--text-main); padding: 0.8rem 2rem;
-            font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px;
-            font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border-radius: 2px;
-        }
-        .btn-nav:hover:not(:disabled) { background: var(--accent); color: white; border-color: var(--accent); }
-        .btn-nav:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .inline-next-btn {
-            background-color: transparent; color: var(--accent); border: 2px solid var(--accent);
-            padding: 1rem 3rem; font-family: 'Oswald', sans-serif; font-size: 1.1rem;
-            letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.3s;
-            display: block; margin: 4rem auto 0;
-        }
-        .inline-next-btn:hover { background-color: var(--accent); color: white; }
-
-        #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); width: 0%; z-index: 200; transition: width 0.3s; }
-
-        .chapter-select { appearance: none; background: transparent; border: none; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: bold; color: var(--text-main); cursor: pointer; text-align: right; padding-right: 1.5rem; }
-        .chapter-select option { background-color: var(--bg-card); color: var(--text-main); }
-        .chapter-select:focus { outline: none; }
-
-        @media (max-width: 768px) {
-            .book-container { padding: 2rem 1.5rem; margin-top: 1rem; }
-            .chapter-title { font-size: 2rem; }
-            .controls-bar { justify-content: space-between; padding: 1rem; }
-            .btn-nav { padding: 0.5rem 1rem; font-size: 0.8rem; }
-            .inline-next-btn { width: 100%; }
+        /* Мобильная версия книги */
+        @media (max-width: 850px) {
+            :root { --book-width: 90vw; --book-height: 75vh; }
+            .book-container { width: var(--book-width); }
+            .paper { left: 0; }
+            #new-interface { padding-top: 40px; align-items: flex-start; }
+            .control-panel { width: 100%; justify-content: space-between; left: 0; padding: 0 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="progress-bar"></div>
+    <!-- Подключение файла данных -->
+    <script src="books_data.js"></script>
 
-    <!-- ШАПКА -->
-    <nav class="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--nav-bg)] backdrop-blur-md transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            
-            <div class="text-xl md:text-2xl font-bold tracking-tighter font-oswald cursor-pointer" onclick="switchTab('read'); goToChapter(0)">
-                ARAMASA<span style="color: var(--accent)">.SAGA</span>
-            </div>
+    <!-- ПАНЕЛЬ УПРАВЛЕНИЯ -->
+    <div class="control-panel" id="main-controls">
+        <button class="btn-ui btn-toggle-dark" onclick="toggleTheme()">ТЕМНАЯ ТЕМА</button>
+        <button class="btn-ui" onclick="toggleNewInterface()">НОВЫЙ ИНТЕРФЕЙС</button>
+    </div>
 
-            <div class="flex space-x-4 md:space-x-8">
-                <button onclick="switchTab('read')" id="tab-read" class="nav-link active-tab font-oswald text-xs md:text-sm font-bold tracking-widest uppercase">Читать</button>
-                <button onclick="switchTab('audio')" id="tab-audio" class="nav-link font-oswald text-xs md:text-sm font-bold tracking-widest uppercase">Аудио</button>
-                <button onclick="switchTab('manga')" id="tab-manga" class="nav-link font-oswald text-xs md:text-sm font-bold tracking-widest uppercase">Манга</button>
-            </div>
-
-            <div class="flex items-center space-x-4">
-                <div class="hidden md:block" id="chapter-selector-container">
-                    <select id="chapter-dropdown" class="chapter-select uppercase" onchange="goToChapter(this.value)"></select>
+    <!-- === СТАРЫЙ ИНТЕРФЕЙС (ОРИГИНАЛЬНЫЙ) === -->
+    <div id="old-interface">
+        <nav class="shatter-element sticky top-0 z-40 bg-[rgba(255,255,255,0.9)] backdrop-blur border-b border-gray-200 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border);">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="text-xl md:text-2xl font-bold font-oswald ml-12 md:ml-0">
+                    ARAMASA<span class="text-red-800">.LEGACY</span>
                 </div>
-
-                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-[var(--border)] transition" title="Сменить тему">
-                    <svg id="icon-sun" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg id="icon-moon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                </button>
+                <div class="hidden md:flex space-x-6">
+                    <span class="text-sm font-bold text-gray-500">ЧИТАТЬ</span>
+                    <span class="text-sm font-bold text-gray-400">МАНГА</span>
+                </div>
             </div>
+        </nav>
+
+        <main class="max-w-4xl mx-auto mt-4 md:mt-10 p-4 md:p-12 shadow-xl rounded old-card shatter-element" id="old-content-area">
+            <!-- Сюда JS загрузит текст -->
+        </main>
+        
+        <div class="fixed bottom-0 w-full p-4 border-t flex justify-center gap-4 shatter-element z-30" style="background-color: var(--card-bg); border-color: var(--border);">
+            <button onclick="changeChapter(-1)" class="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 text-gray-600">Назад</button>
+            <span id="chapter-label" class="self-center font-oswald">Глава 0</span>
+            <button onclick="changeChapter(1)" class="px-6 py-2 border border-red-900 text-red-900 rounded hover:bg-red-900 hover:text-white transition">Вперед</button>
         </div>
-    </nav>
-
-    <main class="flex-grow">
-
-        <!-- ======================= Вкл 1: ЧИТАТЬ ======================= -->
-        <section id="section-read" class="tab-section active-section">
-            <div class="book-container">
-                <div id="chapters-container">
-                    <!-- ОБЛОЖКА / ВСТУПЛЕНИЕ (Глава 0) -->
-                    <div id="chapter-0" class="chapter-content active-chapter">
-                        <div class="text-center py-32">
-                            <h1 class="text-6xl md:text-9xl font-bold text-gray-900 mb-8 tracking-tight leading-none">КРОВЬ<br><span class="text-red-900">АРАМАСЫ</span></h1>
-                            <p class="text-gray-500 uppercase tracking-[0.4em] text-sm font-bold mt-6 border-t border-b border-gray-200 py-6 inline-block">Полное Собрание: Том Первый (Режисерская Версия)</p>
-                            
-                            <div class="mt-20 max-w-2xl mx-auto text-gray-600 italic leading-loose text-xl">
-                                <p>История о девочке, рожденной быть оружием, и семье, которая пыталась научить её быть человеком. История о крови, что гуще воды, и о выборе, который меняет судьбы на десятилетия.</p>
-                            </div>
-
-                            <div class="mt-20">
-                                 <button onclick="nextChapter()" class="inline-next-btn">
-                                    Начать чтение?
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ГЛАВА 1 (ПОЛНЫЙ ТЕКСТ) -->
-                    <div id="chapter-1" class="chapter-content">
-                        <div class="chapter-header">
-                            <span class="chapter-number">ГЛАВА ПЕРВАЯ</span>
-                            <h2 class="chapter-title">Тишина после бури</h2>
-                        </div>
-
-                        <p>Дождь на этой проклятой части острова, затерянном в свинцовых водах где-то на границе территориальных вод Японии и России, никогда не был просто природным явлением. Это была отдельная, живая и враждебная стихия, которая, казалось, ненавидела всё живое, что осмеливалось ступить на эту землю.</p>
-
-                        <p>Это была не вода. Это была густая, маслянистая субстанция, низвергающаяся с черных, как брюхо кита, небес. Капли, тяжелые, словно ртуть, барабанили по капюшонам и плечам, создавая монотонный, сводящий с ума ритм. Воздух здесь был таким плотным, что его приходилось не вдыхать, а глотать. Он пах озоном — предвестником грозы, ржавым, старым железом, словно где-то рядом гнила огромная свалка техники, и чем-то тошнотворно-сладким, липким, вызывающим рвотные позывы.</p>
-
-                        <p>Дзиро Мори знал этот запах слишком хорошо. Это был запах гниющих лилий. Аромат разложения и ложного величия, который, как знали все ветераны Бюро, неизменно сопровождал появление Высших демонов.</p>
-
-                        <p>Местные рыбаки из деревни на побережье Хоккайдо, суеверные старики с лицами, похожими на печеные яблоки, и руками, скрюченными артритом, никогда не подходили к этому острову ближе чем на десять миль. Они шепотом говорили, что шторм здесь никогда не заканчивается, потому что это само небо оплакивает души, пожранные в этих проклятых землях за столетия тьмы. Они говорили, что волны здесь шепчут имена мертвых.</p>
-
-                        <p>Но Дзиро Мори не верил в эти байки. Он не верил в слезы небес и шепот волн. За двадцать пять лет службы он разучился верить во что-либо, кроме калибра .45, безупречной тактической подготовки и холодной надежности посеребренной стали.</p>
-
-                        <p>Он стоял на краю скалистого утеса, и ветер рвал полы его тяжелого, промокшего насквозь тактического плаща. Холодная вода стекала по его лицу, попадая в глубокие морщины у глаз, затекая за воротник, ползла ледяной змейкой по спине, заставляя мышцы невольно сокращаться. Но он даже не моргал. Он превратился в статую, в часть этого мрачного пейзажа.</p>
-
-                        <p>Ему было уже за сорок. Возраст, когда обычные мужчины начинают думать о пенсии, о рыбалке и внуках. Но Дзиро выглядел так, будто был высечен из гранита. Его волосы поседели раньше времени, став цвета пепла из погребального костра — цена, которую он заплатил за знания о том, что скрывается в тени. Цена, которую платил каждый последующий глава Бюро. Но спина его оставалась прямой, как ствол винтовки, а руки, лежащие на поясе, не дрожали даже от пронизывающего холода.</p>
-
-                        <p>Он вглядывался в штормовую тьму, щуря серые, цвета грозового фронта глаза, пытаясь разглядеть то, что скрывала ночь.</p>
-
-                        <p>В пятистах метрах впереди, на вершине холма, подобно черному скелету гигантского древнего зверя, возвышался особняк клана Арамаса.</p>
-
-                        <p>Даже издалека это строение вызывало чувство глубокой неправильности. Это было архитектурное безумие, вызов здравому смыслу и законам физики, воплощенный в камне. Готические шпили впивались в грозовое небо, как иглы, словно пытаясь проткнуть тучи и пустить небу кровь. Стены были сложены из черного вулканического камня, который, казалось, поглощал любой свет, падающий на него. Ни отблеска молний, ни лучи прожекторов не отражались от этой поверхности. Окна — высокие, узкие, стрельчатые — зияли абсолютной чернотой, словно выколотые глаза великана, слепо наблюдающего за маленькими людьми у подножия своего трона.</p>
-
-                        <p>Дзиро медленно выдохнул, и облачко тёплого пара тут же было разорвано ветром. Он чувствовал, как напряжение нарастает в его отряде, рассредоточенном позади него в мокром кустарнике. Двадцать лучших бойцов. «Омега». Элита. Люди, которые видели ад и вернулись обратно. Но даже они сейчас нервничали. Он слышал это в их дыхании, в едва слышном лязге снаряжения, в том, как они переступали с ноги на ногу в грязи.</p>
-
-                        <p>Он поднял руку к уху, активируя гарнитуру. Щелчок кнопки прозвучал в его голове громче, чем раскат грома.</p>
-
-                        <p class="dialogue">— Докладывай, — тихо, почти одними губами произнес Дзиро. Его голос был спокойным, низким, якорем, который удерживал его людей от паники. Но этот голос тонул в грохоте волн, бьющихся о скалы далеко внизу, словно океан пытался заглушить слова людей.</p>
-
-                        <p>Тишина в эфире длилась секунду, две. Слишком долго.</p>
-
-                        <p class="dialogue">— Периметр чист, командир, — наконец отозвался голос лейтенанта Сато. Голос дрожал. Искаженный статикой и помехами, он звучал плоско и неестественно, но Дзиро уловил в нем нотки того самого первобытного, животного страха, который заставляет волосы на затылке вставать дыбом. — Мы прошли по внешнему кругу. Ни ловушек, ни часовых.</p>
-
-                        <p class="dialogue">— Тепловизоры? — коротко спросил Дзиро, не сводя глаз с темных окон особняка.</p>
-
-                        <p class="dialogue">— Молчат, сэр. Абсолютно никаких тепловых сигнатур. Мы сканировали в трех спектрах. Ничего. Даже мелкой фауны. Сейсмические датчики на нуле. Особняк пуст. Словно... — Сато запнулся, подбирая слова, — словно там вымерли все до единого. Даже крыс нет.</p>
-
-                        <p>Дзиро нахмурился. Вода капала с козырька его кепки прямо на нос, но он не обращал внимания. Это было неправильно.</p>
-
-                        <p>Каждая клеточка его тела, каждый шрам, полученный в боях с нечистью, кричали об опасности. Это противоречило всему, что он знал о враге. Клан Арамаса владел этой территорией более ста лет. Они превратили эту часть острова в собственную неприступную крепость. Арамаса, глава клана, был известен своим превосходным умом и жестокостью. Он не оставлял свои владения без охраны. Они не уходят просто так, оставляя парадные двери открытыми для гостей.</p>
-
-                        <p class="dialogue">— Тишина, — пробормотал Дзиро себе под нос. — Слишком громкая тишина.</p>
-
-                        <p>Тишина пугала Дзиро больше, чем рев разъяренной стаи Низших. Низшие были просты: они хотели жрать, они орали, они бежали на пули. С ними было всё понятно. Тишина в логове зверя, которому тысячи лет, означала только одно — ловушку. Капкан, который вот-вот захлопнется.</p>
-
-                        <p>Он почувствовал, как его правая рука сама потянулась к кобуре. Пальцы в перчатке коснулись рукояти «Магнума». Холодная, тяжелая сталь. Это успокаивало. Это давало зыбкую, но необходимую иллюзию контроля над хаосом. Он проверил барабан. Шесть патронов. Серебряные пули с сердечником из освященного вольфрама. Ручная работа. Каждая пуля стоила как подержанный автомобиль, но для Высшего демона это был единственный аргумент.</p>
-
-                        <p>Дзиро обернулся к своим людям. В свете редких вспышек молний он видел их лица — бледные, напряженные, мокрые от дождя и пота. Они смотрели на него. Ждали приказа.</p>
-
-                        <p class="dialogue">— Слушать внимательно, — его голос в общем канале стал жестким, металлическим. — Мы имеем дело с аномалией. Отсутствие противника — это не удача. Это тактический маневр врага.</p>
-
-                        <p>Он сделал паузу, давая время переварить информацию.</p>
-
-                        <p class="dialogue">— Входим, — скомандовал он. — Группа Альфа — парадный вход. Таран и направленный взрыв. Группа Бета — заходите с черного хода, через кухню. Группа прикрытия — держите периметр, снайперы на позиции. Смотреть в оба. Огонь на поражение при малейшем подозрении на движение. Не рисковать. Если тень шевельнется неправильно — стреляйте в тень.</p>
-
-                        <p class="dialogue">— Есть, командир! — хором отозвались голоса в наушнике.</p>
-
-                        <p>Дзиро махнул рукой, и черные фигуры отделились от земли, начав движение к дому. Они двигались профессионально, перебежками, прикрывая друг друга, но в их движениях была скованность. Этот дом давил на психику.</p>
-
-                        <p>Дзиро шел вместе с группой Альфа. Сапоги чавкали в раскисшей грязи, которая, казалось, пыталась утянуть их вниз, в преисподнюю. Они подошли к массивным дубовым дверям главного входа. Дерево было черным, древним, покрытым странной резьбой, от которой болели глаза — переплетенные тела, искаженные лица, символы забытых языков.</p>
-
-                        <p>Сапер, молодой парень по имени Танака, дрожащими руками закрепил заряды пластида на петлях.</p>
-
-                        <p class="dialogue">— Заряд готов! — крикнул он, отбегая назад. — Взрыв через три... две... одну!</p>
-
-                        <p>Мир на мгновение окрасился в оранжевый и белый. Вспышка взрыва разорвала ночную тьму, на секунду осветив мокрый фасад особняка, который в этом свете показался оскаленной мордой черепа. Грохот ударил по ушам, заглушая шум дождя.</p>
-
-                        <p>Массивные двери, которые стояли здесь веками, вылетели внутрь, словно были сделаны из картона. Щепки разлетелись по сторонам, вонзаясь в дорогие обои холла, в мебель, в стены. Дым и пыль клубами вырвались наружу, смешиваясь с дождем.</p>
-
-                        <p class="dialogue">— Пошли! Пошли! Пошли! — заорал Дзиро, первым врываясь в облако пыли.</p>
-
-                        <p>Он ожидал сопротивления. Он ожидал, что из дыма на него бросится стая Низших, или что воздух разорвет магическая атака Высшего. Он ожидал чего угодно. Но его встретила тишина.</p>
-
-                        <p>Бойцы ворвались следом, их тактические фонари разрезали вековую тьму яркими белыми лучами. Лучи метались по огромному холлу, выхватывая из мрака сцены, которые заставили их остановиться.</p>
-
-                        <p>Это было не поле битвы. Это было место бегства.</p>
-
-                        <p>Величественный холл, некогда поражавший роскошью, был разгромлен. Огромная хрустальная люстра лежала на полу, разбитая вдребезги, её осколки хрустели под тяжелыми армейскими ботинками, как кости. Антикварная мебель эпохи Эдо была перевернута, шелковая обивка разодрана. Бесценный китайский фарфор валялся черепками. Со стен были сорваны гобелены, обнажая голый, холодный камень. На полу валялись разбросанные бумаги, какие-то ритуальные свечи, одежда.</p>
-
-                        <p>Здесь пахло не только лилиями. Здесь пахло паникой.</p>
-
-                        <p class="dialogue">— Чисто! — крикнул кто-то слева. — Чисто справа! — отозвался другой голос. — Второй этаж — чисто!</p>
-
-                        <p>Дзиро медленно опустил револьвер, но не убрал его. Он прошел в центр холла, наступая на осколки зеркала. В отражении он увидел свое лицо — грязное, мокрое, с глазами, полными подозрения.</p>
-
-                        <p class="dialogue">— Они бежали, — прошептал подошедший Сато. Лейтенант снял запотевшие очки и протер их рукавом. — Демоны бежали, сэр. Но от чего? Или от кого?</p>
-
-                        <p class="dialogue">— Не знаю, — Дзиро провел рукой по спинке опрокинутого кресла. Бархат был еще сухим. — Но они уходили в такой спешке, что бросили всё. Арамаса любил свои вещи больше, чем своих слуг. Он бы не оставил этот фарфор, если бы за ним не гналась сама смерть.</p>
-
-                        <p class="dialogue">— Куда дальше, командир? Прочесываем этажи?</p>
-
-                        <p>Дзиро замер. Он прислушался. Не ушами, а тем самым шестым чувством, которое вырабатывается, когда ты полжизни смотришь в бездну. Дом был мертв. Верхние этажи были пустыми оболочками. Но внизу... Внизу что-то было.</p>
-
-                        <p>Его тянуло туда. Словно невидимая нить, привязанная к солнечному сплетению, натянулась и вибрировала.</p>
-
-                        <p class="dialogue">— Нет, — сказал он твердо. — Вверх не идем. Там пусто.</p>
-
-                        <p>Он повернулся к темному провалу коридора, который вел в служебные помещения и к лестнице в подвал. Оттуда тянуло холодом. И чем-то еще. Запахом, который пробивался даже сквозь вонь лилий и пыли. Запахом крови.</p>
-
-                        <p class="dialogue">— Мы идем вниз, — скомандовал Дзиро, включая подствольный фонарь на полную мощность. — В погреб. Интуиция подсказывает мне, что самое интересное они прячут там.</p>
-
-                        <p>Бойцы переглянулись, но спорить не стали. Они передернули затворы автоматов и двинулись за своим командиром в подвал особняка, оставляя за спиной шум дождя и разбитую роскошь прошлого. Впереди их ждала тайна, которая изменит их жизни навсегда.</p>
-
-                        <hr style="border: 0; height: 1px; background: #333; margin: 40px 0;">
-
-                        <p>Лестница, ведущая в подвалы особняка, казалась бесконечной. Это была не просто служебная лестница для прислуги — это был широкий каменный спуск, вырубленный прямо в скальной породе, на которой стоял дом. Ступени были стерты посередине тысячами ног, проходивших здесь за столетие.</p>
-
-                        <p>Дзиро шел первым. Луч его подствольного фонаря выхватывал из тьмы влажные, покрытые плесенью стены. Воздух здесь был другим. Если наверху он был просто затхлым, то здесь он стал тяжелым, почти осязаемым. Он давил на плечи, забивал легкие. Температура падала с каждым шагом. Изо рта вырывались пар от теплого дыхания, которые тут же растворялись в сыром мраке.</p>
-
-                        <p>Звук шагов отряда — тяжелый топот армейских ботинок — отражался от стен гулким, искаженным эхом, словно сам дом рычал на непрошеных гостей.</p>
-
-                        <p class="dialogue">— Датчики радиации молчат, — прошептал кто-то сзади. — Биосканеры тоже. Здесь чисто, командир.</p>
-
-                        <p class="dialogue">— Здесь не может быть чисто, — отозвался Дзиро, не оборачиваясь. — Здесь воняет смертью так, как не воняет на кладбище.</p>
-
-                        <p>Запах действительно изменился. Приторный аромат лилий исчез, уступив место чему-то более приземленному и страшному. Запах железа. Запах вскрытого кишечника. Запах старой, запекшейся крови и чего-то кислого, напоминающего озон после сильного электрического разряда.</p>
-
-                        <p>Они спустились на последний пролет. Перед ними была массивная стальная дверь, больше похожая на вход в банковское хранилище или бункер. Она была приоткрыта — всего на пару дюймов, но этого было достаточно, чтобы понять: то, что за ней, не предназначено для человеческих глаз.</p>
-
-                        <p>Дзиро жестом приказал отряду остановиться. Он подошел к двери, прислушиваясь. Тишина. Но не пустая, звенящая тишина верхних этажей. Это была тишина после кровавого месива. Тишина, которая наступает, когда кричать уже некому.</p>
-
-                        <p>Он уперся плечом в холодный металл и навалился всем весом. Петли, не смазанные, кажется, с момента постройки, издали протяжный, душераздирающий скрежет, похожий на вопль раненого зверя. Дверь медленно, неохотно поддалась, открывая проход.</p>
-
-                        <p class="dialogue">— Свет! — скомандовал Дзиро.</p>
-
-                        <p>Десять лучей тактических фонарей одновременно ударили в темноту, разрезая её, как скальпели.</p>
-
-                        <p>То, что они увидели, заставило даже ветеранов «Омеги» — людей, которые завтракали под пулями и видели последствия ритуальных жертвоприношений — замереть и судорожно втянуть воздух. Лейтенант Сато, стоявший за правым плечом Дзиро, тихо выругался, упоминая всех богов синтоизма сразу.</p>
-
-                        <p>Это был огромный круглый зал с высоким сводчатым потолком, напоминающий подземный собор. Вдоль стен были разбросаны стеллажи с древними рукописями. Но они были в ужасном состоянии… Даже реставратор книг здесь не помог. Но внимание всех пришедших было направлено в центр комнаты.</p>
-
-                        <p>Пол, словно мозаикой, был усеян останками Низших демонов — тех самых бесформенных, аморфных сгустков тьмы и голода, которые обычно наводили ужас своей живучестью. Их здесь было не меньше сотни. Целая стая.</p>
-
-                        <p>Но они не были застрелены. На стенах не было следов пуль. Они не были разрублены мечами — не было характерных брызг и расчлененных тел.</p>
-
-                        <p>Они были расплющены.</p>
-
-                        <p>Вдавлены в бетонный пол с такой чудовищной, непостижимой, божественной силой, что превратились в двумерные черные тени самих себя. Это были не трупы, а грязные пятна, размазанные по камню, словно кто-то гигантский наступил на них сапогом. Кости, зубы, плоть — всё было перемолото в единую кашу, впрессованную в структуру пола.</p>
-
-                        <p>Бетон вокруг каждого тела пошел глубокими концентрическими трещинами, образуя кратеры. Но самый страшный узор был в центре зала.</p>
-
-                        <p>Там пол просел почти на полметра, образуя идеальный круг диаметром метров в пять. Внутри этого круга камень был не просто треснут — он был превращен в пыль, в мелкую крошку.</p>
-
-                        <p>А в самом эпицентре этого круга абсолютной смерти, на единственном уцелевшем предмете — простом, грубо сколоченном деревянном ящике — сидела фигура.</p>
-
-                        <p>Дзиро почувствовал, как сердце пропустило удар, а затем забилось где-то в горле.</p>
-
-                        <p>Это был не монстр с рогами и клыками. Не древний демон в доспехах из костей.</p>
-
-                        <p>Это была девочка.</p>
-
-                        <p>Ей было на вид не больше четырнадцати лет, но выглядела больно худой для своего возраста. Она сидела, положив руки на колени, с неестественно прямой спиной, словно вместо позвоночника у неё была идеально ровная арматура.</p>
-
-                        <p class="dialogue">— Контакт! — хрипло крикнул кто-то из бойцов, и десять стволов мгновенно нацелились на маленькую фигурку. Красные точки лазерных целеуказателей заплясали на её груди и лице.</p>
-
-                        <p>Но она даже не шелохнулась. Она не вздрогнула. Не попыталась закрыться руками. Она сидела так же неподвижно, как статуя в храме.</p>
-
-                        <p>Дзиро медленно опустил револьвер, который до этого держал у плеча. Он сделал шаг вперед, переступая через границу зоны разрушения. Его сапоги хрустели по бетонной крошке.</p>
-
-                        <p>Он поднял фонарь выше, освещая её лицо.</p>
-
-                        <p>У неё были светло-русые волосы — цвет, который редко встречался у японцев. Они были в пыли, падали на лицо небрежными прядями, закрывая обзор. Кожа была бледной, почти белой, на виске пульсировала тонкая голубая вена. На ней была довольно дорогая одежда, которую любили носить демоны — хлопковые юбка до пола с порванным подолом, скорее всего в ходе битвы, и красная рубашка. Ткань была покрыта грязью, пылью и пятнами чужой черной крови, но на самой девочке не было видно ни одной раны. Ни царапины.</p>
-
-                        <p>Она медленно подняла голову.</p>
-
-                        <p>Дзиро встретился с ней взглядом и почувствовал, как по спине пробежал ледяной озноб, который не имел ничего общего с температурой воздуха.</p>
-
-                        <p>Глаза.</p>
-
-                        <p>Это были глаза не человека. И не демона. Это были глаза бездны. Гетерохромия. Левый глаз был небесно-голубым, цвета арктического льда — холодным, чистым, безжизненным. Правый — изумрудно-зеленым, глубоким, мутным, как вода в зацветшем болоте.</p>
-
-                        <p>Этот разноцветный взгляд смотрел сквозь яркий свет фонаря, не щурясь. Он смотрел сквозь Дзиро. Сквозь его бойцов. Сквозь бетонные стены подвала. В этих глазах не было ничего человеческого. Ни страха перед оружием. Ни надежды на спасение. Ни мольбы о пощаде. Ни ненависти.</p>
-
-                        <p>Только абсолютная, космическая пустота.</p>
-
-                        <p class="dialogue">— Чисто! — крикнул Дзиро, не оборачиваясь. Его голос сорвался на хрип. — Не стрелять! Всем держать периметр!</p>
-
-                        <p>Бойцы колебались. Они видели, что вокруг. Они видели расплющенные останки демонов, которых обычно приходилось убивать взрывчаткой. Они понимали, кто это сделал. Их пальцы белели на спусковых крючках. Страх в этом подвале был почти физически осязаем.</p>
-
-                        <p class="dialogue">— Где Арамаса? — спросил Дзиро. Он старался, чтобы его голос звучал твердо, властно, как подобает командиру, но эхо, отразившееся от стен, предательски дрожало.</p>
-
-                        <p>Девочка моргнула. Медленно. Механически. Словно старая кукла, у которой садится заводной механизм. Её веки опускались и поднимались с пугающей ритмичностью.</p>
-
-                        <p class="dialogue">— Они ушли, — её голос был тихим, сухим, шершавым. Он был похож на шелест пепла на ветру или трение двух сухих камней. Казалось, она не пользовалась голосовыми связками несколько недель. — Вы опоздали. Они покинули это место несколько часов назад.</p>
-
-                        <p>Дзиро сглотнул вязкую слюну.</p>
-
-                        <p class="dialogue">— Почему он оставил тебя? — спросил он, делая еще один шаг вперед. Он чувствовал, как воздух вокруг девочки вибрирует. Гравитация здесь была нестабильной. Волоски на его руках встали дыбом от статического напряжения. — Ты одна из них?</p>
-
-                        <p>Она медленно опустила взгляд на свои руки, лежащие на коленях. Тонкие, изящные пальцы пианистки. Но они были покрыты множеством мелких, белых шрамов — Следами бесконечных безжалостных тренировок на смерть.</p>
-
-                        <p class="dialogue">— Я выполняю свой долг, — ответила она. В её голосе не было ни горечи, ни обиды. Она просто констатировала факт, как диктор читает сводку погоды. Безэмоционально. — Он сказал, что я послужу для клана. И… — она запнулась, словно хотела что-то добавить, но ту же вспомнила другое, — он запретил мне говорить.</p>
-
-                        <p>Она замолчала, глядя на свои ладони, словно читала на них свою судьбу.</p>
-
-                        <p class="dialogue">— Он оставил меня здесь как прощальный подарок для Бюро. — добавила она.</p>
-
-                        <p class="dialogue">— Он приказал тебе сражаться с нами? — напрягся Дзиро, его палец лег на скобу револьвера.</p>
-
-                        <p class="dialogue">— Нет.</p>
-
-                        <p>Она снова подняла голову. Разноцветные глаза впились в лицо Дзиро.</p>
-
-                        <p class="dialogue">— Он приказал ждать. Он сказал, что люди — это перепуганные животные, которые убивают все, что не понимают или чего боятся. Он сказал ждать смерти.</p>
-
-                        <p>В её словах была такая простая, убийственная логика, что Дзиро стало не по себе. Она не пыталась оправдаться. Она не просила о помощи. Она просто сидела и ждала, когда в неё выстрелят.</p>
-
-                        <p class="dialogue">— Так вы убьете меня? — спросила она с безразличием, глядя прямо в дуло его «Магнума».</p>
-
-                        <p>Она слегка повела плечом, указывая на кровавое месиво вокруг.</p>
-
-                        <p class="dialogue">— Вы видели, что я сделала с ними. Я могу сделать с вами тоже самое. Мне даже не нужно вставать. Я могу сжать ваши сердца прямо сейчас, в груди. Я демон. Это моя природа.</p>
-
-                        <p>Позади Дзиро кто-то из бойцов судорожно вздохнул и передернул затвор. Щелчок металла прозвучал как выстрел.</p>
-
-                        <p>Дзиро посмотрел на расплющенные останки демонов. На бетон, превращенный в пыль. Да, она была опасна. Она была монстром, оружием массового поражения в теле подростка. Протокол Бюро №45 гласил: <i>«Любой биологический объект, созданный с применением крови Высших демонов, подлежит немедленной ликвидации на месте»</i>.</p>
-
-                        <p>Это было правило, написанное кровью тысяч людей.</p>
-
-                        <p>Но Дзиро смотрел не на монстра. Он видел ребенка. Ребенка, которого предал и выбросил как мусор собственный «отец» и «создатель».</p>
-
-                        <p>Дзиро медленно выдохнул. В этот момент он принимал решение, которое могло стоить ему карьеры, свободы и, возможно, жизни.</p>
-
-                        <p class="dialogue">— Планы меняются, — громко сказал он, чтобы слышали все его люди.</p>
-
-                        <p>Он медленно, нарочито демонстративно поднял револьвер дулом вверх, большим пальцем плавно спустил курок с боевого взвода и убрал оружие в кобуру. Щелчок застежки прозвучал оглушительно громко в этой тишине.</p>
-
-                        <p class="dialogue">— Командир? — нервно окликнул его Сато. — Сэр, протокол...</p>
-
-                        <p class="dialogue">— К черту протокол, лейтенант, — отрезал Дзиро, не оборачиваясь. — Иногда можно пренебречь протоколом.</p>
-
-                        <p>Он снял тактическую перчатку с правой руки, скомкал её и сунул в карман. Его ладонь была широкой, теплой, мозолистой от рукояти меча и пистолета. Он шагнул вплотную к ящику, нависая над девочкой, и протянул ей руку.</p>
-
-                        <p class="dialogue">— Как тебя зовут?</p>
-
-                        <p>Она смотрела на его раскрытую ладонь с искренним, глубоким недоумением. Её брови слегка сдвинулись. В её воспоминаниях, в её мире боли, жестокости и нравоучений Арамасы, этот жест не имел смысла. Никто никогда не протягивал руку помощи. Принять помощь было унизительно. Это значило, что ты принимаешь свою слабость и ничтожность перед тем, кто протянул руку.</p>
-
-                        <p class="dialogue">— Акира, — прошептала она. — Фамилии у меня нет…</p>
-
-                        <p class="dialogue">— Теперь есть, — твердо сказал Дзиро. — Вставай, Акира. Сегодня никто не умрет. Я забираю тебя домой.</p>
-
-                        <p>Слово «домой» повисло в воздухе, чужеродное и странное в этом подвале. Но разбудившее далеко забытые воспоминания.</p>
-
-                        <p>Она медленно встала. Её рост оказался внушительным — 170 сантиметров, она была почти вровень с Дзиро. Стояла она ровно и уверенно. Не как человек, а как боец в чьей жизни не было ничего кроме вечной борьбы. С врагом? Нет. С самим собой. Дисциплина в столь юном возрасте была на высшем уровне.</p>
-
-                        <p>Она, колеблясь, подняла руку. Её движения были экономными и отчужденными.</p>
-
-                        <p>Когда она вложила свою ледяную ладонь в теплую руку Дзиро, он почувствовал, как обжегся об её ледяную кожу. Та лишь бесстрастно пожала ему руку.</p>
-
-                        <p>Она не верила ему. Она ждала подвоха. Ждала, что он сейчас сломает ей пальцы или ударит другой рукой. Она смотрела на него как загнанный в угол зверь, который впервые в жизни видит не врага, а... человека.</p>
-
-                        <p>Дзиро сжал её пальцы — крепко, но осторожно, стараясь передать ей свое тепло и согреть.</p>
-
-                        <p class="dialogue">— Пойдем, — сказал он. — Здесь холодно. И воняет падалью.</p>
-
-                        <p>Он повернулся к своему ошеломленному отряду, ведя за собой самое опасное существо, которое они когда-либо встречали.</p>
-
-                        <p class="dialogue">— Мы уходим, — бросил он Сато. — Миссия завершена. Объект под моим контролем.</p>
-
-                        <p class="dialogue">— Но сэр... куда мы её денем? В изолятор?</p>
-
-                        <p>Дзиро посмотрел на девочку, которая шла рядом с ним, стараясь попадать в так своих шагов с его шагами.</p>
-
-                        <p class="dialogue">— Нет, — сказал он. — я отвезу её домой. Для дальнейшего наблюдения.</p>
-
-                        <p>Подъем на поверхность казался бесконечным, словно они выбирались из самого чрева левиафана. Дзиро шел рядом с Акирой, не выпуская её руки. Он чувствовал, как будто ведёт за собой не живое существо, а труп. Нежить которая восстала из мертвых. Эти чувства приносили дискомфорт.</p>
-
-                        <p>Позади них, стараясь держаться на почтительном расстоянии, двигался отряд. Бойцы «Омеги» шли спиной вперед, держа оружие наготове, проверяя каждый темный угол. Они боялись не того, что могло выскочить из тьмы. Они боялись того, кто шел в центре их строя. Они видели, во что превратились Низшие в том зале. И каждый из них понимал: если эта хрупкая девочка решит, что они враги, бронежилеты им не помогут.</p>
-
-                        <p>Когда они вышли в разрушенный холл особняка, ветер ворвался внутрь через выбитые двери, швырнув в лицо горсть ледяных капель.</p>
-
-                        <p>Акира зажмурилась. Свежий воздух, пусть и пахнущий озоном и гарью от взрыва, ударил ей в нос, как нашатырь. После затхлой вони подземелья, пропитанной кровью и страхом, этот воздух казался слишком резким.</p>
-
-                        <p class="dialogue">— Сато, — бросил Дзиро, не останавливаясь. — Вызывай эвакуацию для основной группы. Оцепить периметр. Никого не впускать, пока не прибудут чистильщики из научного отдела. Этот дом нужно законсервировать.</p>
-
-                        <p class="dialogue">— А что писать в отчете, командир? — спросил лейтенант, косясь на девочку. — «Объект захвачен»? Или...</p>
-
-                        <p class="dialogue">— Пиши: «Существ не обнаружено», — жестко оборвал его Дзиро. — Особняк был пуст. Ты понял меня, лейтенант?</p>
-
-                        <p>Сато замер. Он посмотрел в глаза своему командиру, потом перевел взгляд на Акиру, которая стояла под дождем, глядя на свои босые нелепые ноги.</p>
-
-                        <p class="dialogue">— Так точно, сэр.</p>
-
-                        <p>Они вышли на улицу. Шторм не утихал. Волны с грохотом разбивались о скалы где-то внизу, вторя грому. Черные бронированные джипы Бюро стояли в ряд, их фары прорезали тьму белыми конусами света.</p>
-
-                        <p>Акира остановилась перед машиной. Она смотрела на этот огромный металлический механизм с недоверием и неким интересом. В клане Арамасы не было машин. Там были порталы, тени и пешие переходы. Арамаса презирал все новое и отдавал своё предпочтение старому и проверенному веками. Технологии людей были для неё чуждыми и непонятными.</p>
-
-                        <p class="dialogue">— Садись, — Дзиро открыл заднюю дверь своего личного джипа. — Там тепло.</p>
-
-                        <p>Она колебалась секунду, смотря в салон машины обитый кожей. Помедлив она все же залезла туда, сев по середине.</p>
-
-                        <p>Дзиро сел за руль. Он не стал брать водителя. Он хотел попытаться вывести её на разговор. И ему нужно было убедиться, что она не убьет никого по дороге.</p>
-
-                        <p>Двигатель зарычал, оживая. Джип тронулся, переваливаясь через корни деревьев, и начал спуск по размытой дороге.</p>
-
-                        <p>Они ехали молча. Только шум дождя по крыше, ритмичный скрип дворников и гул мотора.</p>
-
-                        <p>Дзиро курил, приоткрыв окно. Запах табака смешивался с запахом старой кожи салона. Он думал о том, что только что сделал. Он нарушил прямой приказ. Он нарушил Протокол 45. Он спас биологическое оружие класса «А». Если Совет узнает, его не просто уволят. Его отдадут под трибунал. Или ликвидируют. Но он верил, что все это не просто так.</p>
-
-                        <p>Он посмотрел в зеркало. Акира смотрела в окно.</p>
-
-                        <p>За стеклом проносился мир, которого она ещё не видела. Деревья, гнущиеся под ветром. Указатели. Огни далекой электростанции.</p>
-
-                        <p class="dialogue">— Ты голодна? — спросил он, нарушая тишину.</p>
-
-                        <p>Акира медленно повернула голову. Её разноцветные глаза в полумраке салона казались светящимися.</p>
-
-                        <p class="dialogue">— Не отказалась бы. — ответила она.</p>
-
-                        <p class="dialogue">— Дома есть еда. Масато наверняка приготовил карри. Он часто готовит, когда я задерживаюсь.</p>
-
-                        <p class="dialogue">— Кто это? — Спросила Акира. Это было первое проявление любопытства с её стороны. Её взгляд упал на фотографию семьи на передней панели.</p>
-
-                        <p class="dialogue">— Мой сын. Ему шестнадцать. Он... сложный. Как и ты.</p>
-
-                        <p class="dialogue">— Я сомневаюсь что мы с ним похожи. — Фыркнула Акира. — Сын? Он тоже охотник?</p>
-
-                        <p class="dialogue">— Вроде того. И у меня есть дочь. Харука. Ей десять. Она... она совсем другая. Я познакомлю тебя с ними.</p>
-
-                        <p>Они въехали в город.</p>
-
-                        <p>Для Акиры это было в новизну. Небоскребы, залитые неоном. Рекламные щиты, кричащие яркими красками. Потоки машин, похожие на реки из красных и белых огней. Шум. Гомон. Жизнь.</p>
-
-                        <p>Если бы весь этот кошмар увидел Арамаса, он бы умер от шока. От этой мысли Акире стало смешно, хотя внешне она не проявляла никаких эмоций. Акира, хоть и не признавала этого, но часто ловила себя на том, как бы забавно было бы видеть агонию на лице главы…</p>
-
-                        <p class="dialogue">— О чем задумалась? — Спросил Дзиро.</p>
-
-                        <p class="dialogue">— Да так… Вы все равно не поймёте.</p>
-
-                        <p class="dialogue">— Может и пойму? — Старик попытался быть настойчивее, но словив её холодный взгляд понял что идея была не из лучших.</p>
-
-                        <p>Машина свернула с автострады в тихий спальный район.</p>
-
-                        <p>Улицы здесь были уже, дома ниже. Фонари горели теплым желтым светом. Дом семьи Мори стоял в конце тупика. Это был старый, добротный двухэтажный дом с черепичной крышей, окруженный небольшим садом. В окнах горел свет. Дзиро почувствовал укол вины. Дети не спали. Ждали его.</p>
-
-                        <p>Он заглушил мотор. Тишина навалилась на них, звенящая и плотная после шума дороги.</p>
-
-                        <p class="dialogue">— Приехали, — сказал он. — Это мой дом. Теперь и твой.</p>
-
-                        <p>Акира не двигалась. Она смотрела на дом, как на крепость врага.</p>
-
-                        <p class="dialogue">— Вы буквально привели волка в овчарню, — сказала она. — Вы же прекрасно понимаете, что если это все план? Что одной ночью я могу застать вас всех врасплох. И вы и ваши дети пострадают от моих рук. Мне не составит труда уничтожить это строение за секунду. И я…</p>
-
-                        <p class="dialogue">— Я знаю, кто ты, Акира. — Неожиданно для девушки перебил её Дзиро. — Я видел, что ты сделала в подвале. Но я также вижу, что ты сдерживаешь это. Ты не убила моих людей, хотя могла. Ты не убила меня.</p>
-
-                        <p>Акира не смогла найти на это ответа и промолчала.</p>
-
-                        <p class="dialogue">— Послушай, — тяжело вздохнув начал говорить Дзиро, — в этом доме есть правила. Первое: никто никого не убивает. Второе: мы моем руки перед едой. Третье: мы защищаем семью. Ты справишься с этим?</p>
-
-                        <p>Она долго смотрела на него. В её правом, зеленом глазу, мелькнуло что-то похожее на сомнение.</p>
-
-                        <p class="dialogue">— Так и быть. — наконец сказала она, отвернувшись.</p>
-
-                        <p>Дзиро вздохнул. Этого было достаточно.</p>
-
-                        <p>Они вышли из машины. Дождь здесь был тише, мягче. Он пах мокрой землей и хвоей, а не кровью. Дзиро открыл калитку, которая противно скрипнула.</p>
-
-                        <p class="dialogue">— Идем. Только, прошу тебя, не сломай ничего и не нападай на Масато. Он может быть резким, но он хороший парень.</p>
-
-                        <p>Акира кивнула. Она шла за ним след в след, бесшумная, как призрак.</p>
-
-                        <p>Дзиро подошел к входной двери. Он на секунду замер, держась за ручку. Он понимал, что сейчас, открыв эту дверь, он навсегда изменит жизнь своих детей. Он впускал в их мир монстра. Но он надеялся, что этот монстр сможет стать человеком.</p>
-
-                        <p>Он глубоко вдохнул, набрал в грудь воздуха, как перед прыжком в воду, и повернул ключ.</p>
-
-                        <p>Замок щелкнул.</p>
-
-                        <p>Дверь открылась, выпуская наружу полосу теплого, золотистого света, запах еды и звуки работающего телевизора.</p>
-
-                        <p class="dialogue">— Я дома! — громко сказал Дзиро, переступая порог.</p>
-
-                        <p>Акира шагнула следом, из тьмы в свет. И дверь за ней закрылась, отсекая прошлое.</p>
-                        
-                        <div class="next-chapter-btn-container">
-                            <button onclick="nextChapter()" class="inline-next-btn">Следующая глава →</button>
-                        </div>
-                    </div>
-
-                    <!-- ГЛАВА 2 (ЗАГЛУШКА) -->
-                    <div id="chapter-2" class="chapter-content">
-                        <div class="chapter-header">
-                            <span class="chapter-number">ГЛАВА ВТОРАЯ</span>
-                            <h2 class="chapter-title">Огонь и Лед</h2>
-                        </div>
-
-                        <div class="stub-container">
-                            <div class="stub-line"></div>
-                            <div class="stub-text">Текст на редакции</div>
-                            <div class="stub-sub">Материал временно недоступен</div>
-                        </div>
-                        
-                        <div class="next-chapter-btn-container">
-                            <button onclick="nextChapter()" class="inline-next-btn">Следующая глава →</button>
-                        </div>
-                    </div>
-
-                    <!-- ГЛАВА 3 (ЗАГЛУШКА) -->
-                    <div id="chapter-3" class="chapter-content">
-                        <div class="chapter-header">
-                            <span class="chapter-number">ГЛАВА ТРЕТЬЯ</span>
-                            <h2 class="chapter-title">Урок боли</h2>
-                        </div>
-
-                        <div class="stub-container">
-                            <div class="stub-line"></div>
-                            <div class="stub-text">Текст на редакции</div>
-                            <div class="stub-sub">Материал временно недоступен</div>
-                        </div>
-                        
-                        <div class="next-chapter-btn-container">
-                            <button onclick="nextChapter()" class="inline-next-btn">Следующая глава →</button>
-                        </div>
-                    </div>
-
-                    <!-- ГЛАВА 4 (ЗАГЛУШКА) -->
-                    <div id="chapter-4" class="chapter-content">
-                        <div class="chapter-header">
-                            <span class="chapter-number">ГЛАВА ЧЕТВЕРТАЯ</span>
-                            <h2 class="chapter-title">Первая кровь</h2>
-                        </div>
-
-                        <div class="stub-container">
-                            <div class="stub-line"></div>
-                            <div class="stub-text">Текст на редакции</div>
-                            <div class="stub-sub">Материал временно недоступен</div>
-                        </div>
-                        
-                        <div class="next-chapter-btn-container">
-                            <button onclick="nextChapter()" class="inline-next-btn">Следующая глава →</button>
-                        </div>
-                    </div>
-
-                    <!-- ГЛАВА 5 (ЗАГЛУШКА) -->
-                    <div id="chapter-5" class="chapter-content">
-                        <div class="chapter-header">
-                            <span class="chapter-number">ГЛАВА ПЯТАЯ</span>
-                            <h2 class="chapter-title">Шепот Иллюзий</h2>
-                        </div>
-
-                        <div class="stub-container">
-                            <div class="stub-line"></div>
-                            <div class="stub-text">Текст на редакции</div>
-                            <div class="stub-sub">Материал временно недоступен</div>
-                        </div>
-                        
-                        <div class="next-chapter-btn-container">
-                            <button onclick="nextChapter()" class="inline-next-btn">Следующая глава →</button>
-                        </div>
-                    </div>
-
-                    <!-- ГЛАВА 6 (ЗАГЛУШКА) -->
-                    <div id="chapter-6" class="chapter-content">
-                        <div class="chapter-header">
-                            <span class="chapter-number">ГЛАВА ШЕСТАЯ</span>
-                            <h2 class="chapter-title">Казнь под дождем</h2>
-                        </div>
-
-                        <div class="stub-container">
-                            <div class="stub-line"></div>
-                            <div class="stub-text">Текст на редакции</div>
-                            <div class="stub-sub">Материал временно недоступен</div>
-                        </div>
-                        
-                        <div class="next-chapter-btn-container">
-                            <button onclick="nextChapter()" class="inline-next-btn">Следующая глава →</button>
-                        </div>
-                    </div>
-
-                    <!-- ГЛАВА 7 (ЗАГЛУШКА) -->
-                    <div id="chapter-7" class="chapter-content">
-                        <div class="chapter-header">
-                            <span class="chapter-number">ГЛАВА СЕДЬМАЯ</span>
-                            <h2 class="chapter-title">Падение</h2>
-                        </div>
-
-                        <div class="stub-container">
-                            <div class="stub-line"></div>
-                            <div class="stub-text">Текст на редакции</div>
-                            <div class="stub-sub">Материал временно недоступен</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- НИЖНЯЯ ПАНЕЛЬ -->
-            <div id="controls-read" class="controls-bar">
-                <button onclick="prevChapter()" id="btn-prev" class="btn-nav">← Назад</button>
-                <div class="flex flex-col text-center">
-                    <span id="chapter-indicator" class="font-bold text-sm tracking-widest uppercase" style="color: var(--text-main)">Вступление</span>
-                </div>
-                <button onclick="nextChapter()" id="btn-next" class="btn-nav">Вперед →</button>
-            </div>
-        </section>
-
-        <!-- ======================= Вкл 2: АУДИО ======================= -->
-        <section id="section-audio" class="tab-section">
-            <div class="book-container flex flex-col items-center justify-center min-h-[60vh] text-center">
-                <div class="border-2 border-dashed border-[var(--border)] p-16 rounded-lg max-w-lg mx-auto">
-                    <h2 class="text-4xl font-bold mb-4 text-[var(--text-muted)] opacity-40 font-oswald">АУДИОКНИГА</h2>
-                    <p class="text-lg mb-8 text-[var(--text-muted)]">Этот раздел будет доступен позже.</p>
-                    <div class="inline-block px-6 py-2 bg-[var(--border)] text-[var(--text-muted)] font-bold text-xs tracking-widest rounded-full">СКОРО</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ======================= Вкл 3: МАНГА ======================= -->
-        <section id="section-manga" class="tab-section">
-            <div class="book-container flex flex-col items-center justify-center min-h-[60vh] text-center">
-                <div class="border-2 border-dashed border-[var(--border)] p-16 rounded-lg max-w-lg mx-auto">
-                    <h2 class="text-4xl font-bold mb-4 text-[var(--text-muted)] opacity-40 font-oswald">МАНГА</h2>
-                    <p class="text-lg mb-8 text-[var(--text-muted)]">Визуальная адаптация в разработке.</p>
-                    <div class="inline-block px-6 py-2 bg-[var(--border)] text-[var(--text-muted)] font-bold text-xs tracking-widest rounded-full">СКОРО</div>
-                </div>
-            </div>
-        </section>
-
-    </main>
+    </div>
+
+    <!-- === НОВЫЙ ИНТЕРФЕЙС (КНИГА) === -->
+    <div id="new-interface">
+        <div class="absolute top-4 left-4 z-50">
+            <button class="btn-ui" onclick="toggleNewInterface()">← ВЕРНУТЬСЯ НАЗАД</button>
+        </div>
+        
+        <div class="book-container" id="book">
+            <div class="book-cover-back"></div>
+            <!-- Страницы -->
+        </div>
+    </div>
 
     <script>
-        // --- ЛОГИКА ТАБОВ ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active-section'));
-            document.getElementById('section-' + tabId).classList.add('active-section');
+        // === ПРОВЕРКА ЗАГРУЗКИ ДАННЫХ ===
+        window.onload = function() {
+            // Проверяем, существует ли переменная bookData
+            if (typeof bookData === 'undefined') {
+                showError();
+                return;
+            }
+
+            // Если все ок, инициализируем сайт
+            initApp();
+        };
+
+        function showError() {
+            document.body.innerHTML = `
+                <div style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: #f9f7f1; text-align: center; padding: 20px;">
+                    <h1 style="color: #991b1b; font-family: 'Oswald', sans-serif; font-size: 3rem; margin-bottom: 20px;">ОШИБКА ЗАГРУЗКИ</h1>
+                    <p style="font-family: 'Merriweather', serif; font-size: 1.2rem; color: #333; margin-bottom: 10px;">
+                        Текст не смог загрузиться. Возможно, файл <b>books_data.js</b> отсутствует или поврежден.
+                    </p>
+                    <p style="font-family: 'Merriweather', serif; font-size: 1.5rem; font-weight: bold; color: #1a1a1a; padding: 20px; border: 2px dashed #991b1b; border-radius: 10px;">
+                        Напишите @belzebool, чтобы он исправил ошибку.
+                    </p>
+                </div>
+            `;
+        }
+
+        // === ПЕРЕМЕННЫЕ ===
+        let currentChapterIndex = 0;
+        let isNewInterface = false;
+        let bookPages = [];
+        let currentPageIndex = 0;
+
+        function initApp() {
+            // Восстанавливаем главу
+            const saved = localStorage.getItem('aramasa_chapter');
+            if (saved) currentChapterIndex = parseInt(saved);
             
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active-tab'));
-            const btn = document.getElementById('tab-' + tabId);
-            if(btn) btn.classList.add('active-tab');
+            loadChapter(currentChapterIndex);
+        }
 
-            const controls = document.getElementById('controls-read');
-            const chapterSelector = document.getElementById('chapter-selector-container');
+        function loadChapter(index) {
+            if (index < 0) index = 0;
+            if (index >= bookData.length) index = bookData.length - 1;
             
-            if (tabId === 'read') {
-                if(controls) controls.style.display = 'flex';
-                if(chapterSelector) chapterSelector.style.display = 'block';
-            } else {
-                if(controls) controls.style.display = 'none';
-                if(chapterSelector) chapterSelector.style.display = 'none';
-            }
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+            currentChapterIndex = index;
+            const chapter = bookData[index];
 
-        // --- ЛОГИКА ЧТЕНИЯ ---
-        let currentChapter = 0;
-        let totalChapters = 0;
-
-        function buildDropdown() {
-            const dropdown = document.getElementById('chapter-dropdown');
-            if (!dropdown) return;
-            dropdown.innerHTML = '';
-            const chapters = document.querySelectorAll('#chapters-container .chapter-content');
-            chapters.forEach((chapter, idx) => {
-                const titleEl = chapter.querySelector('.chapter-title');
-                const numberText = idx === 0 ? 'Вступление' : `Глава ${idx}`;
-                const option = document.createElement('option');
-                option.value = idx;
-                option.textContent = titleEl ? `${numberText}: ${titleEl.textContent}` : numberText;
-                dropdown.appendChild(option);
-            });
-            dropdown.value = currentChapter;
-        }
-
-        function updateChapterUI() {
-            document.querySelectorAll('#chapters-container .chapter-content').forEach(el => el.classList.remove('active-chapter'));
-            const active = document.querySelector(`#chapters-container .chapter-content[id$='-${currentChapter}']`);
-            if (active) active.classList.add('active-chapter');
+            // Старый интерфейс
+            const oldArea = document.getElementById('old-content-area');
+            oldArea.innerHTML = chapter.htmlContent;
+            document.getElementById('chapter-label').innerText = chapter.title;
             
-            const prevBtn = document.getElementById('btn-prev');
-            const nextBtn = document.getElementById('btn-next');
-            if (prevBtn) prevBtn.disabled = currentChapter === 0;
-            if (nextBtn) {
-                nextBtn.disabled = totalChapters === 0;
-                nextBtn.innerText = currentChapter === totalChapters ? "В НАЧАЛО" : "ВПЕРЕД →";
-            }
-
-            const indicator = document.getElementById('chapter-indicator');
-            if (indicator) indicator.innerText = currentChapter === 0 ? "ВСТУПЛЕНИЕ" : `ГЛАВА ${currentChapter}`;
-
-            const dropdown = document.getElementById('chapter-dropdown');
-            if(dropdown) dropdown.value = currentChapter;
-
-            const progressBar = document.getElementById('progress-bar');
-            const progress = totalChapters === 0 ? 0 : (currentChapter / totalChapters) * 100;
-            if (progressBar) progressBar.style.width = `${progress}%`;
-
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            // Скролл вверх
+            window.scrollTo(0,0);
+            localStorage.setItem('aramasa_chapter', index);
         }
 
-        function nextChapter() {
-            if (currentChapter < totalChapters) {
-                currentChapter++;
-            } else {
-                currentChapter = 0;
-            }
-            updateChapterUI();
+        function changeChapter(dir) {
+            loadChapter(currentChapterIndex + dir);
         }
 
-        function prevChapter() {
-            if (currentChapter > 0) {
-                currentChapter--;
-                updateChapterUI();
-            }
-        }
-
-        function goToChapter(index) {
-            currentChapter = parseInt(index, 10) || 0;
-            switchTab('read');
-            updateChapterUI();
-        }
-
-        function computeChapters() {
-            const chapters = Array.from(document.querySelectorAll('#chapters-container .chapter-content'));
-            totalChapters = Math.max(...chapters.map(el => {
-                const id = el.id?.split('-')[1];
-                const num = Number(id);
-                return Number.isFinite(num) ? num : 0;
-            }));
-        }
-
-        // --- ТЕМНАЯ ТЕМА ---
+        // === ТЕМНАЯ ТЕМА ===
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
-            const sun = document.getElementById('icon-sun');
-            const moon = document.getElementById('icon-moon');
-            const isDark = document.body.classList.contains('dark-mode');
-            if (sun && moon) {
-                if (isDark) {
-                    sun.classList.remove('hidden');
-                    moon.classList.add('hidden');
-                } else {
-                    sun.classList.add('hidden');
-                    moon.classList.remove('hidden');
-                }
-            }
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
 
-        // --- ИНИЦИАЛИЗАЦИЯ ---
-        (function init() {
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-                const sun = document.getElementById('icon-sun');
-                const moon = document.getElementById('icon-moon');
-                if (sun && moon) { sun.classList.remove('hidden'); moon.classList.add('hidden'); }
+        // === НОВЫЙ ИНТЕРФЕЙС (ПЕРЕКЛЮЧЕНИЕ) ===
+        function toggleNewInterface() {
+            const oldUI = document.getElementById('old-interface');
+            const newUI = document.getElementById('new-interface');
+            const controls = document.getElementById('main-controls');
+            const shatterEls = document.querySelectorAll('.shatter-element');
+
+            if (!isNewInterface) {
+                // Включаем книгу
+                prepareBook(currentChapterIndex); // Готовим страницы
+                
+                controls.classList.add('hidden-ui');
+                
+                // Разлет элементов
+                shatterEls.forEach(el => {
+                    const randX = (Math.random() - 0.5) * window.innerWidth;
+                    const randY = (Math.random() - 0.5) * window.innerHeight;
+                    el.style.transform = `translate(${randX}px, ${randY}px) rotate(${Math.random()*30}deg)`;
+                    el.style.opacity = '0';
+                });
+
+                setTimeout(() => newUI.classList.add('active'), 400);
+                isNewInterface = true;
+            } else {
+                // Выключаем книгу
+                newUI.classList.remove('active');
+                
+                setTimeout(() => {
+                    shatterEls.forEach(el => {
+                        el.style.transform = '';
+                        el.style.opacity = '1';
+                    });
+                    controls.classList.remove('hidden-ui');
+                }, 400);
+                
+                isNewInterface = false;
             }
-            computeChapters();
-            buildDropdown();
-            updateChapterUI();
-            switchTab('read');
-        })();
+        }
+
+        // === ЛОГИКА КНИГИ (УПРОЩЕННАЯ) ===
+        function prepareBook(index) {
+            const chapter = bookData[index];
+            const bookEl = document.getElementById('book');
+            bookEl.innerHTML = '<div class="book-cover-back"></div>';
+            
+            // Простая нарезка (по абзацам для примера)
+            // В реальном проекте тут нужна сложная логика высоты
+            const temp = document.createElement('div');
+            temp.innerHTML = chapter.htmlContent;
+            const paragraphs = Array.from(temp.querySelectorAll('p'));
+            
+            // Генерируем всего несколько страниц для демо
+            let pagesHtml = [];
+            
+            // Титульник
+            pagesHtml.push(`<div style="text-align:center; padding-top:50px;"><h1>${chapter.title}</h1></div>`);
+            
+            let currentText = "";
+            paragraphs.forEach((p, i) => {
+                currentText += p.outerHTML;
+                if (currentText.length > 600 || i === paragraphs.length - 1) {
+                    pagesHtml.push(`<div class="book-content">${currentText}</div>`);
+                    currentText = "";
+                }
+            });
+
+            // Рендер листов
+            const sheets = Math.ceil(pagesHtml.length / 2);
+            for(let i=0; i<sheets; i++) {
+                const front = pagesHtml[i*2] || "";
+                const back = pagesHtml[i*2+1] || "";
+                
+                const paper = document.createElement('div');
+                paper.className = 'paper';
+                paper.style.zIndex = sheets - i;
+                paper.innerHTML = `
+                    <div class="front">${front}<div style="position:absolute; bottom:10px; right:20px; font-size:12px;">${i*2+1}</div></div>
+                    <div class="back">${back}<div style="position:absolute; bottom:10px; left:20px; font-size:12px;">${i*2+2}</div></div>
+                `;
+                // Клик переворачивает
+                paper.onclick = function() {
+                    this.classList.toggle('flipped');
+                }
+                bookEl.appendChild(paper);
+            }
+        }
+
     </script>
 </body>
 </html>
