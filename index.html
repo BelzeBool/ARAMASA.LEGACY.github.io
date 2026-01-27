@@ -22,9 +22,9 @@
             --nav-bg: rgba(10, 10, 10, 0.95);
             
             /* Настройки Книги */
-            --book-width: 420px;
-            --book-height: 600px;
-            --paper-color: #f3ebd8;
+            --book-width: 440px; /* Чуть шире для удобства */
+            --book-height: 640px;
+            --paper-color: #f7f1e3; /* Более приятный оттенок бумаги */
         }
 
         /* СВЕТЛАЯ ТЕМА */
@@ -45,7 +45,7 @@
             transition: background-color 0.5s, color 0.5s;
         }
 
-        /* --- Типографика --- */
+        /* --- Типографика Старого интерфейса --- */
         h1, h2, h3, .font-oswald { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
         
         .drop-cap::first-letter { 
@@ -65,9 +65,9 @@
             opacity: 0.9;
         }
 
-        /* === КНОПКА "НОВЫЙ ИНТЕРФЕЙС" (Сдвинута ниже) === */
+        /* === КНОПКА "НОВЫЙ ИНТЕРФЕЙС" === */
         .promo-btn {
-            position: fixed; top: 110px; left: 30px; z-index: 200; /* Сдвинул ниже */
+            position: fixed; top: 110px; left: 30px; z-index: 200;
             background: rgba(0,0,0,0.5); 
             border: 1px solid var(--accent-red);
             color: var(--accent-red);
@@ -88,7 +88,7 @@
             opacity: 0; pointer-events: none;
         }
 
-        /* === КНОПКА ТЕМЫ (Справа Сверху) === */
+        /* === КНОПКА ТЕМЫ === */
         .theme-toggle {
             position: fixed; top: 25px; right: 30px; z-index: 210;
             background: transparent; border: none; cursor: pointer;
@@ -136,7 +136,6 @@
             will-change: transform, opacity;
         }
 
-        /* Выпадающий список глав */
         .chapter-select {
             background: transparent;
             color: var(--accent-red);
@@ -193,24 +192,43 @@
         .front, .back {
             position: absolute; width: 100%; height: 100%;
             background-color: var(--paper-color);
-            padding: 40px 30px; box-sizing: border-box;
+            padding: 50px 40px; /* Больше отступы */
+            box-sizing: border-box;
             backface-visibility: hidden; overflow: hidden;
-            color: #2c2c2c;
-            box-shadow: inset 3px 0px 20px rgba(0,0,0,0.1);
+            color: #1a1a1a; /* Темно-серый текст для мягкости */
+            box-shadow: inset 3px 0px 20px rgba(0,0,0,0.05);
         }
         
         .front { z-index: 2; }
         .back { 
             transform: rotateY(180deg); 
             z-index: 1; 
-            background-image: linear-gradient(to right, rgba(0,0,0,0.1), transparent 10%);
+            background-image: linear-gradient(to right, rgba(0,0,0,0.08), transparent 10%);
         }
         
         .paper.flipped { transform: rotateY(-180deg); z-index: 1; }
 
-        .book-content { font-family: 'Crimson Text', serif; font-size: 19px; line-height: 1.5; text-align: justify; }
-        .book-content p { margin-bottom: 10px; text-indent: 20px; }
-        .book-content h1, .book-content h2 { font-family: 'Oswald'; text-align: center; color: black; margin-bottom: 20px; }
+        /* Улучшенная типографика книги */
+        .book-content { 
+            font-family: 'Crimson Text', serif; 
+            font-size: 20px; /* Чуть крупнее */
+            line-height: 1.6; 
+            text-align: justify;
+            text-justify: inter-word; /* Равномерное распределение */
+            hyphens: auto; /* Переносы слов */
+        }
+        .book-content p { 
+            margin-bottom: 12px; 
+            text-indent: 25px; 
+        }
+        .book-content h1, .book-content h2, .book-content h3 { 
+            font-family: 'Oswald'; 
+            text-align: center; 
+            color: #000; 
+            margin-bottom: 25px; 
+            margin-top: 10px;
+            font-weight: 500;
+        }
         
         .book-cover-back {
             position: absolute; width: calc(var(--book-width) * 2 + 40px); height: calc(var(--book-height) + 20px);
@@ -220,24 +238,23 @@
 
         /* ЗАКЛАДКА (RIBBON) */
         .bookmark-ribbon {
-            position: absolute; top: -10px; right: 20px;
+            position: absolute; top: -10px; right: 30px;
             width: 30px; height: 50px;
             background: var(--accent-red);
             clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
-            transform: translateY(-100%); /* Спрятана */
+            transform: translateY(-100%);
             transition: transform 0.3s;
             cursor: pointer;
             z-index: 10;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
         }
         .bookmark-ribbon.active { transform: translateY(0); }
-        /* Зона клика для закладки (невидимая область) */
         .bookmark-trigger {
-            position: absolute; top: 0; right: 0; width: 60px; height: 60px;
+            position: absolute; top: 0; right: 0; width: 70px; height: 70px;
             z-index: 9; cursor: pointer;
         }
         .bookmark-trigger:hover + .bookmark-ribbon:not(.active) {
-            transform: translateY(-60%); /* Чуть выглядывает при наведении */
+            transform: translateY(-60%);
         }
 
         /* Мобильная версия */
@@ -245,7 +262,8 @@
             :root { --book-width: 92vw; --book-height: 70vh; }
             .book-container { width: var(--book-width); }
             .paper { left: 0; }
-            .front { border-radius: 0 5px 5px 0; }
+            .front { border-radius: 0 5px 5px 0; padding: 30px 20px; }
+            .book-content { font-size: 18px; }
             #new-interface { padding-top: 20px; align-items: flex-start; margin-top: 40px; }
             .promo-btn { top: auto; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; text-align: center; }
             .theme-toggle { top: 20px; right: 20px; }
@@ -342,7 +360,7 @@
         // === ПЕРЕМЕННЫЕ ===
         let currentChapterIndex = 0;
         let isNewInterface = false;
-        let bookmarkedPages = {}; // Хранение закладок: { chapterId: pageIndex }
+        let bookmarkedPages = {}; 
 
         function initApp() {
             // Восстанавливаем тему
@@ -379,6 +397,7 @@
 
         // === ЗАГРУЗКА ГЛАВЫ ===
         function loadChapter(index) {
+            // Проверка границ
             if (index < 0) index = 0;
             if (index >= bookData.length) index = bookData.length - 1;
             
@@ -386,12 +405,12 @@
             const chapter = bookData[index];
 
             // Обновляем селект
-            document.getElementById('chapter-select').value = index;
+            const select = document.getElementById('chapter-select');
+            if(select) select.value = index;
 
             // 1. Обновляем Старый Интерфейс
             const oldArea = document.getElementById('old-content-area');
             
-            // Очистка от жестких цветов (для поддержки светлой темы)
             let safeContent = chapter.htmlContent
                 .replace(/text-gray-900/g, "")
                 .replace(/text-gray-600/g, "opacity-80")
@@ -407,7 +426,8 @@
             
             // Если книга открыта, обновляем и её
             if(isNewInterface) {
-                prepareBook(index);
+                // Небольшая задержка для плавности, если вызывается автоматом
+                setTimeout(() => prepareBook(index), 100);
             }
         }
 
@@ -470,7 +490,7 @@
             
             const temp = document.createElement('div');
             temp.innerHTML = chapter.htmlContent;
-            const elements = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, div, blockquote'));
+            const elements = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, div, blockquote, ul, ol'));
             
             let pagesHtml = [];
             
@@ -485,7 +505,7 @@
             
             let currentText = "";
             let charCount = 0;
-            const CHAR_LIMIT = 550;
+            const CHAR_LIMIT = 500; // Немного уменьшил для лучшей читаемости
 
             elements.forEach((el, i) => {
                 let html = el.outerHTML
@@ -507,11 +527,19 @@
                 if (i === elements.length - 1 && currentText) pagesHtml.push(`<div class="book-content">${currentText}</div>`);
             });
 
-            if (pagesHtml.length % 2 !== 0) pagesHtml.push("");
+            // Если нечетное кол-во, добавляем страницу "Конец главы"
+            if (pagesHtml.length % 2 !== 0) {
+                pagesHtml.push(`
+                    <div style="height:100%; display:flex; flex-direction:column; justify-content:center; text-align:center; color:#888;">
+                        <div style="font-family:'Oswald'; font-size:24px; color:#000; margin-bottom:10px;">КОНЕЦ ГЛАВЫ</div>
+                        <p style="font-family:'Crimson Text'; font-style:italic;">Переверните страницу,<br>чтобы продолжить чтение.</p>
+                    </div>
+                `);
+            }
 
             const sheets = Math.ceil(pagesHtml.length / 2);
             
-            // Проверяем сохраненную страницу для этой главы
+            // Проверяем сохраненную страницу
             let savedPage = 0;
             if (bookmarkedPages[index] !== undefined) savedPage = bookmarkedPages[index];
 
@@ -524,7 +552,6 @@
                 paper.style.zIndex = sheets - i;
                 paper.id = `paper-${i}`;
                 
-                // Проверяем, стоит ли закладка на этой странице
                 const isBookmarked = (savedPage === i * 2) || (savedPage === i * 2 + 1);
                 const ribbonClass = isBookmarked ? "bookmark-ribbon active" : "bookmark-ribbon";
 
@@ -533,36 +560,47 @@
                         <div class="bookmark-trigger" onclick="toggleBookmark(event, ${index}, ${i*2})"></div>
                         <div class="${ribbonClass}" id="bm-${i*2}"></div>
                         <div style="height:100%;">${frontContent}</div>
-                        <div style="position:absolute; bottom:15px; width:100%; text-align:center; font-size:10px; color:#888; font-family:'Oswald'; left:0;">${i*2+1}</div>
+                        <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:12px; color:#888; font-family:'Oswald'; left:0;">${i*2+1}</div>
                     </div>
                     <div class="back">
                         <div style="height:100%;">${backContent}</div>
-                        <div style="position:absolute; bottom:15px; width:100%; text-align:center; font-size:10px; color:#888; font-family:'Oswald'; left:0;">${i*2+2}</div>
+                        <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:12px; color:#888; font-family:'Oswald'; left:0;">${i*2+2}</div>
                     </div>
                 `;
                 
-                // Перелистывание
                 paper.addEventListener('click', function(e) {
-                    if(e.target.classList.contains('bookmark-trigger')) return; // Игнорим клик по закладке
+                    if(e.target.classList.contains('bookmark-trigger')) return; 
 
                     if (this.classList.contains('flipped')) {
+                        // Листаем назад
                         this.classList.remove('flipped');
                         setTimeout(() => this.style.zIndex = sheets - i, 400); 
-                        // Сохраняем страницу (левую)
                         saveProgress(index, (i - 1) * 2); 
                     } else {
+                        // Листаем ВПЕРЕД
                         this.classList.add('flipped');
                         this.style.zIndex = i + 1;
-                        // Сохраняем страницу (правую, новую открытую)
                         saveProgress(index, (i + 1) * 2);
+
+                        // --- АВТОМАТИЧЕСКИЙ ПЕРЕХОД НА СЛЕД. ГЛАВУ ---
+                        // Если это последний лист
+                        if (i === sheets - 1) {
+                            // Проверяем, есть ли следующая глава
+                            if (index < bookData.length - 1) {
+                                setTimeout(() => {
+                                    // Эффект закрытия и перехода
+                                    changeChapter(1);
+                                    // Сбрасываем прогресс для новой главы на 0
+                                    saveProgress(index + 1, 0); 
+                                }, 800); // Ждем пока лист перевернется
+                            }
+                        }
                     }
                 });
                 
                 bookEl.appendChild(paper);
 
-                // Если это сохраненная страница, листаем до неё
                 if (i * 2 < savedPage) {
-                    // Сразу переворачиваем без анимации (или с быстрой)
                     paper.classList.add('flipped');
                     paper.style.zIndex = i + 1;
                 }
@@ -571,21 +609,16 @@
 
         function saveProgress(chapterIdx, pageIdx) {
             if (pageIdx < 0) pageIdx = 0;
-            // Просто сохраняем текущий прогресс для открытия в будущем
-            // Это "автоматическая закладка"
             bookmarkedPages[chapterIdx] = pageIdx;
             localStorage.setItem('aramasa_bookmarks', JSON.stringify(bookmarkedPages));
         }
 
         function toggleBookmark(e, chapterIdx, pageIdx) {
-            e.stopPropagation(); // Не листать
+            e.stopPropagation(); 
             const ribbon = document.getElementById(`bm-${pageIdx}`);
-            ribbon.classList.toggle('active');
-            
-            // Если активна, можно сохранить как "важную" закладку, 
-            // но пока мы используем ту же систему для автосохранения
-            if(ribbon.classList.contains('active')) {
-                saveProgress(chapterIdx, pageIdx);
+            if(ribbon) {
+                ribbon.classList.toggle('active');
+                if(ribbon.classList.contains('active')) saveProgress(chapterIdx, pageIdx);
             }
         }
 
