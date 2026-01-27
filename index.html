@@ -428,10 +428,17 @@
         let currentPage = 0;
         let pageToChapterMap = [];
         let chapterStartMap = {};
+        
+        // Темы
+        const themes = ['dark', 'light', 'sepia', 'midnight'];
+        let currentThemeIndex = 0;
 
         window.onload = function() {
-            if (typeof bookData === 'undefined') return;
-            
+            if (typeof bookData === 'undefined') {
+                document.getElementById('original-content').innerHTML = `<div style="color:red; text-align:center;">Ошибка загрузки books_data.js</div>`;
+                return;
+            }
+
             // Темы
             const savedTheme = localStorage.getItem('aramasa_theme') || 'default';
             setTheme(savedTheme);
@@ -474,9 +481,10 @@
         }
         
         function toggleTOC() {
-            // Генерируем список только 1 раз
             const list = document.getElementById('toc-list-content');
-            if(list.innerHTML.trim() === '') {
+            // Check if list is empty (ignoring whitespace)
+            if(list.children.length === 0) {
+                list.innerHTML = '';
                 bookData.forEach((ch, i) => {
                     const li = document.createElement('li');
                     li.innerHTML = `<span>${ch.title.split(':')[0]}</span><span class="text-xs opacity-50">${ch.title.split(':')[1] || ''}</span>`;
@@ -554,7 +562,7 @@
                 chapterStartMap[idx] = globalPageCount;
                 
                 // Титул
-                allHtml.push(`<div class="chapter-title-page h-full flex flex-col justify-center text-center px-4"><span class="block text-[var(--accent)] font-oswald text-sm mb-4">ГЛАВА ${idx}</span><h1 class="font-cinzel text-3xl">${ch.title}</h1></div>`);
+                allHtml.push(`<div class="chapter-title-page h-full flex flex-col justify-center text-center px-4"><span class="block text-[var(--accent)] font-oswald text-sm mb-4 tracking-[4px]">ГЛАВА ${idx}</span><h1 class="font-cinzel text-3xl leading-snug">${ch.title}</h1><div class="w-10 h-1 bg-[var(--accent)] mx-auto mt-6"></div></div>`);
                 globalPageCount++;
                 if(!mobile) { allHtml.push(""); globalPageCount++; } // Пустая для разворота
 
@@ -569,32 +577,26 @@
                 
                 let currentText = "";
                 let charCount = 0;
-                // Лимит для ПК и Мобайл
-                const LIMIT = mobile ? 650 : 1100;
+                // Лимит символов
+                const LIMIT = mobile ? 1200 : 900;
 
                 elements.forEach(el => {
-                    // Картинки
                     if(el.tagName === 'IMG') {
                         if(currentText) { allHtml.push(`<div class="book-content">${currentText}</div>`); globalPageCount++; }
                         allHtml.push(`<div class="h-full flex items-center justify-center">${el.outerHTML}</div>`);
                         currentText = ""; charCount = 0; globalPageCount++;
                         return;
                     }
+
+                    // Чистим классы
+                    let html = el.outerHTML.replace(/text-[^ ]+/g, "").replace(/text-5xl|text-9xl/g,"");
                     
-                    // Текст
-                    // Убираем цвета из классов, оставляем структуру
-                    let html = el.outerHTML.replace(/text-(gray|white|black)-[0-9]+/g, "");
-                    // Добавляем класс dialogue для <p class="dialogue">
-                    if(el.classList.contains('dialogue')) html = `<p class="dialogue">${el.innerHTML}</p>`;
-
-                    const len = el.innerText.length;
-
-                    if(charCount + len > LIMIT) {
+                    if(charCount + el.innerText.length > LIMIT) {
                          allHtml.push(`<div class="book-content">${currentText}</div>`);
                          currentText = ""; charCount = 0; globalPageCount++;
                     }
                     currentText += html;
-                    charCount += len;
+                    charCount += el.innerText.length;
                 });
                 if(currentText) { allHtml.push(`<div class="book-content">${currentText}</div>`); globalPageCount++; }
             });
@@ -621,14 +623,17 @@
                     </div>
                 `;
                 
-                paper.onclick = () => {
-                   if(mobile) {
-                       if(paper.classList.contains('flipped')) flipBookPage(i); // Вернуть
-                       else flipBookPage(i); // Листать
-                   } else {
-                       flipBookPage(i);
-                   }
+                paper.onclick = (e) => {
+                    if(e.target.closest('.toc-item') || e.target.tagName === 'A') return;
+                    
+                    if(mobile) {
+                        if(paper.classList.contains('flipped')) flipBookPage(i); 
+                        else flipBookPage(i); 
+                    } else {
+                        flipBookPage(i);
+                    }
                 };
+                
                 container.appendChild(paper);
             }
             updateVisibility(0);
@@ -636,14 +641,19 @@
 
         function flipBookPage(idx) {
             const paper = document.getElementById(`sheet-${idx}`);
+            const total = totalBookPages;
+            const isMobile = window.innerWidth <= 850;
+            
             if(paper.classList.contains('flipped')) {
+                // Назад
                 paper.classList.remove('flipped');
-                setTimeout(() => paper.style.zIndex = totalBookPages - idx, 300);
+                setTimeout(() => paper.style.zIndex = total - idx, 300);
                 currentPage = idx;
             } else {
+                // Вперед
                 paper.classList.add('flipped');
-                if(isMobile()) paper.style.zIndex = 0; 
-                else paper.style.zIndex = idx + 1;
+                if(isMobile) paper.style.zIndex = 0; // Мобилка: уходит вниз
+                else paper.style.zIndex = idx + 1; 
                 currentPage = idx + 1;
             }
             updateVisibility(currentPage);
@@ -662,36 +672,46 @@
                 }
             });
             currentPage = target;
-            updateVisibility(target);
+            updateVisibility(currentPage);
         }
 
         function jumpToChapter(chIndex) {
-            const mobile = isMobile();
             if(chapterStartMap[chIndex] !== undefined) {
+                const mobile = isMobile();
                 const page = mobile ? chapterStartMap[chIndex] : Math.floor(chapterStartMap[chIndex]/2);
                 flipToPage(page);
             }
         }
 
         function updateVisibility(curr) {
+            // Оптимизация: скрываем далекие страницы
             const papers = document.querySelectorAll('.paper');
-            const range = 3; 
+            const range = 2;
             papers.forEach((p, i) => {
                 if(i >= curr - range && i <= curr + range) p.classList.add('visible');
                 else p.classList.remove('visible');
             });
-            
-            const pct = (curr / totalBookPages) * 100;
-            document.getElementById('scrubber-fill').style.width = pct + "%";
-            
-            const label = isMobile() ? `${curr+1} / ${totalBookPages}` : `Разворот ${curr+1}`;
-            document.getElementById('book-page-info').innerText = label;
+
+            const mobile = isMobile();
+            if(!mobile) {
+                document.getElementById('scrubber-fill').style.width = (curr / totalBookPages * 100) + "%";
+                document.getElementById('book-page-info').innerText = `Стр. ${curr*2+1}`;
+            } else {
+                document.getElementById('mob-page-info').innerText = `${curr+1} / ${totalBookPages}`;
+                // Показать хинт "Вернуть" если есть перевернутые страницы
+                const hint = document.querySelector('.top-stack-hint');
+                if(hint) {
+                    if(curr > 0) hint.classList.add('visible');
+                    else hint.classList.remove('visible');
+                }
+            }
         }
 
         function scrubBook(e) {
             const rect = e.currentTarget.getBoundingClientRect();
             const pct = (e.clientX - rect.left) / rect.width;
-            flipToPage(Math.floor(pct * totalBookPages));
+            const target = Math.floor(pct * totalBookPages);
+            flipToPage(target);
         }
 
         function isMobile() { return window.innerWidth <= 850; }
