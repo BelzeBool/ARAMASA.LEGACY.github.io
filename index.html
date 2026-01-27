@@ -27,7 +27,7 @@
             --book-bg: #12100e;
             --paper-color: #f2eecb; 
             --ink-color: #1a1a1a;
-            --line-color: rgba(0,0,0,0.05); /* Линовка для блокнота */
+            --line-color: rgba(0,0,0,0.05);
             --book-width: 460px; 
             --book-height: 660px;
         }
@@ -73,7 +73,6 @@
         img { max-width: 100%; height: auto; display: block; margin: 20px auto; border-radius: 4px; }
 
         /* === КНОПКИ === */
-        
         .theme-toggle {
             position: fixed; top: 20px; right: 20px; z-index: 300;
             background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); cursor: pointer;
@@ -186,9 +185,10 @@
 
         /* === МОБИЛЬНАЯ ВЕРСИЯ (ОПТИМИЗИРОВАННЫЙ БЛОКНОТ) === */
         @media (max-width: 850px) {
-            :root { --book-width: 94vw; --book-height: 75vh; }
+            /* Уменьшаем масштаб на 10-15% как просили */
+            :root { --book-width: 90vw; --book-height: 72vh; }
             
-            .book-container { width: var(--book-width); height: var(--book-height); margin-top: 50px; perspective: none; }
+            .book-container { width: var(--book-width); height: var(--book-height); margin-top: 40px; perspective: none; }
             .book-cover-back { display: none; } 
             
             /* Блокнотный лист */
@@ -202,7 +202,8 @@
             }
             
             .front { 
-                padding: 30px 20px 20px 20px; 
+                /* Отступ снизу 100px чтобы текст не заезжал на панель */
+                padding: 25px 20px 100px 20px; 
                 border-right: none;
                 /* Линовка */
                 background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
@@ -226,7 +227,7 @@
 
             /* Анимация перелистывания (В стопку наверх) */
             .paper.flipped {
-                transform: translateY(-92%) scale(0.95); /* Торчит край стопки */
+                transform: translateY(-94%) scale(0.95); /* Торчит край стопки */
                 z-index: 0 !important; /* Уходит на дно */
                 opacity: 1; visibility: visible;
                 cursor: pointer;
@@ -244,26 +245,30 @@
             
             /* Индикатор возврата на стопке */
             .paper.flipped .front::after {
-                content: 'ВЕРНУТЬ'; position: absolute; bottom: 5px; left: 0; width: 100%; text-align: center;
-                color: white; font-family: 'Oswald'; font-size: 10px; letter-spacing: 2px; opacity: 0.5;
+                content: 'НАЗАД'; position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center;
+                color: white; font-family: 'Oswald'; font-size: 10px; letter-spacing: 2px; opacity: 0.6;
             }
 
-            .book-content { font-size: 18px; line-height: 32px; /* Попадание в линовку */ }
-            .book-content h1 { font-size: 22px !important; margin-bottom: 20px !important; line-height: 32px !important; }
+            /* Уменьшенный шрифт для компактности */
+            .book-content { font-size: 15px; line-height: 32px; }
+            .book-content h1 { font-size: 20px !important; margin-bottom: 15px !important; line-height: 32px !important; }
             
             /* Интерфейс */
             #new-interface { padding-top: 0; }
-            .promo-btn { bottom: 85px; right: 20px; font-size: 0.7rem; padding: 10px 15px; } 
+            .promo-btn { bottom: 85px; right: 20px; font-size: 0.7rem; padding: 8px 15px; } 
             
             .book-bottom-panel { 
-                bottom: 15px; padding: 10px 25px; width: 100%; 
+                bottom: 10px; padding: 10px 20px; width: 95%; 
                 flex-direction: row; justify-content: space-between;
-                background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-                border-radius: 16px; width: 90%;
+                background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+                border-radius: 12px; height: 50px;
             }
-            .scrubber-track { width: 40%; height: 6px; }
+            .scrubber-track { width: 35%; height: 6px; }
             .page-info { font-size: 12px; color: #fff !important; }
-            .toc-btn-small { color: white; border: 1px solid rgba(255,255,255,0.2); }
+            .toc-btn-small { 
+                color: white; border: 1px solid rgba(255,255,255,0.2); 
+                font-size: 10px; padding: 6px 10px;
+            }
             
             .px-4 { padding-left: 15px; padding-right: 15px; }
             .text-3xl { font-size: 1.5rem; }
@@ -321,7 +326,7 @@
         </div>
         
         <div class="book-bottom-panel">
-            <div class="toc-btn-small" onclick="flipToPage(0)"><i class="fa-solid fa-list-ul"></i></div>
+            <div class="toc-btn-small" onclick="toggleTOC()"><i class="fa-solid fa-list-ul"></i> Оглавление</div>
             <div class="scrubber-track" onclick="scrubBook(event)">
                 <div class="scrubber-fill" id="scrubber-fill"></div>
             </div>
@@ -341,6 +346,9 @@
         let currentPage = 0;
         let pageToChapterMap = [];
         let chapterStartMap = {};
+        
+        // Переменная для запоминания страницы перед открытием оглавления
+        let lastPageBeforeToC = 1; 
 
         function initApp() {
             if (localStorage.getItem('aramasa_theme') === 'light') document.body.classList.add('light-mode');
@@ -445,11 +453,10 @@
             // Оглавление
             let tocHtml = `<div class="chapter-title-page"><h1>ОГЛАВЛЕНИЕ</h1><ul style="list-style:none; padding:0; text-align:left;">`;
             bookData.forEach((ch, i) => {
-                const titleShort = ch.title.split(':')[0]; // Берем только "Глава X"
+                const titleShort = ch.title.split(':')[0]; 
                 const titleRest = ch.title.split(':')[1] || ""; 
                 const display = titleRest ? `<b>${titleShort}:</b><br>${titleRest}` : titleShort;
                 
-                // ВАЖНО: Передаем event в функцию
                 tocHtml += `<li onclick="jumpToChapter(${i}, event)" style="border-bottom:1px dashed #999; padding:10px 0; cursor:pointer;">
                     ${display}
                 </li>`;
@@ -470,7 +477,6 @@
                 pagesForChapter.push(`<div class="chapter-title-page"><h1>${chapter.title}</h1></div>`);
 
                 let currentText = "";
-                // Уменьшенный лимит для мобилок, но с поддержкой скролла это не так критично
                 const CHAR_LIMIT = isMobile ? 600 : 1500; 
                 
                 elements.forEach((el, i) => {
@@ -544,6 +550,19 @@
                 bookEl.appendChild(paper);
             }
             updateVisibility(0);
+        }
+
+        function toggleTOC() {
+            if (currentPage === 0) {
+                // Если мы уже в оглавлении (стр 0) и нажимаем кнопку, возвращаемся
+                // на сохраненную страницу или на 1, если не сохранено.
+                const returnTo = lastPageBeforeToC > 0 ? lastPageBeforeToC : 1;
+                flipToPage(returnTo);
+            } else {
+                // Если мы на любой другой странице, сохраняем её и идем в оглавление
+                lastPageBeforeToC = currentPage;
+                flipToPage(0);
+            }
         }
 
         function handleFlip(sheetIndex) {
