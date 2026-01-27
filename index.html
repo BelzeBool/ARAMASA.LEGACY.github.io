@@ -11,139 +11,159 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ==================== ОРИГИНАЛЬНЫЕ СТИЛИ (СВЕТЛАЯ БАЗА) ==================== */
+        /* ==================== НАСТРОЙКИ ТЕМ (THEMING SYSTEM) ==================== */
         :root {
-            /* Оригинальные цвета из твоего файла */
+            /* Базовые переменные (по умолчанию Dark) */
+            --bg-main: #0a0a0a;
+            --bg-card: #141414;
+            --text-main: #e5e5e5;
+            --text-muted: #a3a3a3;
+            --accent: #8a1c1c;
+            --border: #262626;
+            --nav-bg: rgba(10, 10, 10, 0.98);
+            --drop-cap: #8a1c1c;
+            
+            /* Книга */
+            --book-bg: #12100e;
+            --paper-color: #f2eecb; 
+            --ink-color: #1a1a1a;
+            --line-color: rgba(0,0,0,0.05);
+            --book-width: 460px; 
+            --book-height: 800px; /* Увеличена высота на ~20% */
+        }
+
+        /* [LIGHT MODE] - Светлая */
+        [data-theme="light"] {
             --bg-main: #f9f7f1;
             --bg-card: #ffffff;
             --text-main: #1a1a1a;
             --text-muted: #5a5a5a;
             --accent: #991b1b;
             --border: #e5e5e5;
-            --nav-bg: rgba(255, 255, 255, 0.95);
+            --nav-bg: rgba(255, 255, 255, 0.98);
             --drop-cap: #991b1b;
             
-            /* Настройки для режима Книги */
             --book-bg: #e3dcd3;
-            --paper-color: #fffef9; 
-            --ink-color: #1a1a1a;
-            --line-color: rgba(0,0,0,0.05);
-            --book-width: 460px; 
-            --book-height: 660px;
+            --paper-color: #fffef9;
+            --ink-color: #000000;
         }
 
-        body.dark-mode {
-            /* Темная версия оригинального дизайна */
-            --bg-main: #121212;
-            --bg-card: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --accent: #ff4d4d;
-            --border: #333333;
-            --nav-bg: rgba(30, 30, 30, 0.95);
-            --drop-cap: #ff4d4d;
-            
-            /* Книга Dark */
-            --book-bg: #12100e;
-            --paper-color: #2b2b2b;
-            --ink-color: #d4d4d4;
-            --line-color: rgba(255,255,255,0.05);
+        /* [SEPIA MODE] - Сепия (для чтения) */
+        [data-theme="sepia"] {
+            --bg-main: #f4ecd8;
+            --bg-card: #fdf6e3;
+            --text-main: #5b4636;
+            --text-muted: #887265;
+            --accent: #8f5902;
+            --border: #eaddcf;
+            --nav-bg: rgba(244, 236, 216, 0.98);
+            --drop-cap: #8f5902;
+
+            --book-bg: #5b4636;
+            --paper-color: #f4ecd8;
+            --ink-color: #433422;
         }
+
+        /* [MIDNIGHT MODE] - Глубокая ночь (синий) */
+        [data-theme="midnight"] {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #cbd5e1;
+            --text-muted: #64748b;
+            --accent: #38bdf8;
+            --border: #334155;
+            --nav-bg: rgba(15, 23, 42, 0.98);
+            --drop-cap: #38bdf8;
+
+            --book-bg: #020617;
+            --paper-color: #1e293b;
+            --ink-color: #e2e8f0;
+        }
+
 
         body {
             font-family: 'Merriweather', serif;
             background-color: var(--bg-main);
             color: var(--text-main);
-            line-height: 2.0;
-            font-size: 18px; /* Чуть меньше чем 20, чтобы не было гигантским на ПК */
+            line-height: 2.2;
+            font-size: 20px;
             overflow-x: hidden;
             transition: background-color 0.4s ease, color 0.4s ease;
             margin: 0;
         }
 
-        /* Типографика оригинала */
+        /* Утилитные классы оригинала */
         h1, h2, h3, .font-oswald { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
-        
         .tab-section { display: none; opacity: 0; transition: opacity 0.4s ease; }
         .tab-section.active-section { display: block; opacity: 1; }
 
-        /* Контейнер текста (как в оригинале) */
         .book-container-orig {
-            max-width: 900px;
-            margin: 2rem auto 8rem; /* Отступ снизу для футера */
-            padding: 4rem 5rem;
-            background: var(--bg-card);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-            min-height: 80vh;
-            border-radius: 4px;
-            transition: background-color 0.4s ease, box-shadow 0.4s ease;
-            position: relative; /* Для позиционирования */
+            max-width: 900px; margin: 2rem auto 8rem; padding: 4rem 5rem;
+            background: var(--bg-card); box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            min-height: 80vh; border-radius: 4px; transition: background-color 0.3s ease;
         }
 
-        /* Анимация смены глав */
-        .fade-text { animation: fadeInText 0.6s ease-out forwards; }
-        @keyframes fadeInText { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        .chapter-header { text-align: center; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+        /* Стили текста в оригинале */
+        .chapter-header { text-align: center; margin-bottom: 4rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
         .chapter-number { font-family: 'Oswald', sans-serif; font-size: 0.9rem; letter-spacing: 0.3em; color: var(--accent); display: block; margin-bottom: 1rem; font-weight: 700; }
-        .chapter-title { font-family: 'Lora', serif; font-size: 2.5rem; font-weight: 700; line-height: 1.2; }
+        .chapter-title { font-family: 'Lora', serif; font-size: 3rem; font-weight: 700; line-height: 1.1; }
         
-        .drop-cap::first-letter { font-family: 'Lora', serif; font-size: 4.5rem; font-weight: 700; float: left; margin-right: 0.8rem; margin-top: -0.3rem; line-height: 0.8; color: var(--drop-cap); }
-        p.dialogue { margin-left: 1.5rem; position: relative; font-style: italic; color: var(--text-main); }
-        p.dialogue::before { content: '—'; position: absolute; left: -1.2rem; color: var(--accent); font-weight: bold; }
+        .drop-cap::first-letter { font-family: 'Lora', serif; font-size: 5rem; font-weight: 700; float: left; margin-right: 1rem; margin-top: -0.5rem; line-height: 0.8; color: var(--drop-cap); }
         
-        /* Навигация (Header) */
+        /* ДИАЛОГИ (Оригинал) */
+        p.dialogue { margin-left: 2rem; position: relative; font-style: italic; color: var(--text-main); opacity: 0.9; }
+        p.dialogue::before { content: '—'; position: absolute; left: -1.5rem; color: var(--accent); font-weight: bold; }
+        
+        /* Навигация Оригинала */
         .nav-link { cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid transparent; transition: all 0.3s; color: var(--text-muted); }
         .nav-link.active-tab { color: var(--accent); border-bottom-color: var(--accent); }
         .nav-link:hover { color: var(--accent); }
 
-        /* Футер управления */
         .controls-bar {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--nav-bg); backdrop-filter: blur(8px);
-            border-top: 1px solid var(--border); padding: 1rem 2rem;
-            display: flex; justify-content: center; align-items: center; gap: 2rem;
-            z-index: 50; box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
-            transition: background-color 0.4s ease;
+            background: var(--nav-bg); backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border); padding: 1.5rem;
+            display: flex; justify-content: center; gap: 2rem;
+            z-index: 50; box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            transition: background-color 0.3s ease;
         }
-        
         .btn-nav {
-            background: transparent; border: 1px solid var(--border);
-            color: var(--text-main); padding: 0.6rem 1.5rem;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-main); padding: 0.8rem 2rem;
             font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 2px;
-            font-size: 0.8rem; cursor: pointer; transition: all 0.2s; border-radius: 2px;
+            font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border-radius: 2px;
         }
         .btn-nav:hover:not(:disabled) { background: var(--accent); color: white; border-color: var(--accent); }
-        .btn-nav:disabled { opacity: 0.4; cursor: default; }
-
-        .chapter-select { 
-            appearance: none; background: transparent; border: none; 
-            font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: bold; 
-            color: var(--text-main); cursor: pointer; text-align: right; padding-right: 1.5rem; outline: none;
-        }
+        
+        .chapter-select { appearance: none; background: transparent; border: none; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: bold; color: var(--text-main); cursor: pointer; text-align: right; padding-right: 1.5rem; outline: none; }
         .chapter-select option { background-color: var(--bg-card); color: var(--text-main); }
+        #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); width: 0%; z-index: 200; transition: width 0.3s; }
 
-        /* Прогресс бар */
-        #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 200; transition: width 0.3s; }
+        /* Переключатель темы (Кнопка) */
+        .theme-toggle-btn {
+            padding: 8px; border-radius: 50%; 
+            transition: all 0.3s; cursor: pointer;
+            color: var(--text-main);
+            border: 1px solid transparent;
+        }
+        .theme-toggle-btn:hover { background: var(--bg-card); border-color: var(--border); color: var(--accent); }
 
-
-        /* ==================== РЕЖИМ КНИГИ (OVERLAY) ==================== */
+        /* ==================== СТИЛИ НОВОГО ИНТЕРФЕЙСА (КНИГА) ==================== */
         #book-view {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--book-bg);
             z-index: 200;
-            transform: translateY(100%); /* Скрыт внизу */
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s;
-            opacity: 0;
+            transform: translateY(100%); /* Скрыт */
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow: hidden;
         }
-        #book-view.active { transform: translateY(0); opacity: 1; }
+        #book-view.active { transform: translateY(0); }
 
-        /* Контейнер книги (ПК) */
+        /* ПК КНИГА (3D) */
         .book-container-3d {
             position: relative; width: calc(var(--book-width) * 2); height: var(--book-height);
-            transform-style: preserve-3d; perspective: 1500px;
+            transform-style: preserve-3d; perspective: 2000px;
         }
         
         .paper {
@@ -155,7 +175,6 @@
             transform-style: preserve-3d;
             z-index: 1; cursor: pointer;
             box-shadow: inset 3px 0 10px rgba(0,0,0,0.1);
-            border-radius: 0 4px 4px 0;
             visibility: hidden;
         }
         .paper.visible { visibility: visible; }
@@ -163,21 +182,33 @@
         
         .front, .back {
             position: absolute; width: 100%; height: 100%;
-            padding: 50px 40px; box-sizing: border-box;
+            padding: 60px 40px; box-sizing: border-box;
             backface-visibility: hidden; overflow: hidden;
             color: var(--ink-color);
+            transition: background-color 0.3s, color 0.3s;
         }
-        .front { z-index: 2; background-image: linear-gradient(to right, rgba(0,0,0,0.05), transparent 15%); }
-        .back { transform: rotateY(180deg); z-index: 1; background-image: linear-gradient(to left, rgba(0,0,0,0.05), transparent 15%); border-radius: 4px 0 0 4px; }
+        .front { z-index: 2; border-radius: 0 5px 5px 0; background-image: linear-gradient(to right, rgba(0,0,0,0.05), transparent 20%); }
+        .back { transform: rotateY(180deg); z-index: 1; border-radius: 5px 0 0 5px; background-image: linear-gradient(to left, rgba(0,0,0,0.05), transparent 20%); }
 
         .book-content { font-family: 'Crimson Text', serif; font-size: 19px; line-height: 1.6; text-align: justify; color: inherit; }
-        .book-content h1 { font-family: 'Cinzel'; font-size: 26px; text-align: center; margin-bottom: 20px; color: inherit; }
+        .book-content h1 { font-family: 'Cinzel'; font-size: 28px; text-align: center; margin-bottom: 20px; color: inherit; }
+        .book-content p { margin-bottom: 1rem; text-indent: 1.5rem; }
         
+        /* ВЫДЕЛЕНИЕ ДИАЛОГОВ В КНИГЕ */
+        .book-content .dialogue {
+            font-style: italic;
+            border-left: 2px solid var(--accent);
+            padding-left: 10px;
+            margin-left: 5px;
+            color: var(--ink-color);
+            opacity: 0.9;
+        }
+
         /* КНОПКА ОТКРЫТИЯ КНИГИ */
         .mode-switch-btn {
             position: fixed; bottom: 100px; right: 30px; z-index: 100;
             background: var(--accent); color: white;
-            padding: 12px 24px; border-radius: 50px;
+            padding: 15px; border-radius: 50px;
             box-shadow: 0 4px 20px rgba(153, 27, 27, 0.4);
             cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
             display: flex; align-items: center; gap: 10px;
@@ -194,6 +225,14 @@
             z-index: 300; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2);
         }
         .close-book-btn:hover { background: var(--accent); border-color: var(--accent); }
+        
+        /* Кнопка темы в книге */
+        .book-theme-btn {
+            position: absolute; top: 30px; right: 30px;
+            background: rgba(0,0,0,0.6); color: white; width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 300; cursor: pointer; border: 1px solid rgba(255,255,255,0.2);
+        }
 
         .toc-list { list-style: none; padding: 0; }
         .toc-item { border-bottom: 1px dashed #999; padding: 10px 0; cursor: pointer; display: flex; justify-content: space-between; transition: color 0.2s; }
@@ -274,12 +313,13 @@
             .mob-page-info { color: white; font-family: 'Oswald'; font-size: 12px; }
             
             .mode-switch-btn { bottom: 90px; right: 20px; font-size: 0.8rem; padding: 10px 15px; }
+            .book-theme-btn { right: 70px; } /* Смещаем кнопку темы на мобилке, чтобы не перекрывала выход */
         }
         .spiral { display: none; }
         .mobile-nav-controls { display: none; }
     </style>
 </head>
-<body>
+<body data-theme="dark"> <!-- По умолчанию темная -->
 
     <!-- Подключаем данные книги -->
     <script src="books_data.js"></script>
@@ -311,8 +351,9 @@
                     <div class="hidden md:block">
                         <select id="chapter-dropdown" class="chapter-select uppercase" onchange="goToChapterOrig(this.value)"></select>
                     </div>
-                    <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-[var(--border)] transition" title="Тема">
-                        <i class="fa-solid fa-circle-half-stroke text-[var(--text-main)]"></i>
+                    <!-- Кнопка темы -->
+                    <button onclick="cycleTheme()" class="theme-toggle-btn" title="Сменить тему">
+                        <i class="fa-solid fa-palette"></i>
                     </button>
                 </div>
             </div>
@@ -361,6 +402,10 @@
             <i class="fa-solid fa-arrow-left"></i> <span class="ml-2 font-oswald text-xs tracking-widest">ВЕРНУТЬСЯ НА САЙТ</span>
         </div>
         
+        <div class="book-theme-btn" onclick="cycleTheme()" title="Сменить тему книги">
+            <i class="fa-solid fa-palette"></i>
+        </div>
+        
         <div class="book-container-3d" id="book-3d">
             <div class="spiral hidden md:hidden block"></div> <!-- Спираль только для моб -->
             <!-- Страницы -->
@@ -389,10 +434,13 @@
         let totalBookPages = 0;
         let chapterStartMap = {}; 
         let pageToChapterMap = [];
+        
+        // Темы
+        const themes = ['dark', 'light', 'sepia', 'midnight'];
+        let currentThemeIndex = 0;
 
         // === ИНИЦИАЛИЗАЦИЯ ===
         window.onload = function() {
-            // Проверка загрузки данных
             if (typeof bookData === 'undefined') {
                 document.getElementById('original-content').innerHTML = `
                     <div style="color:red; text-align:center; padding: 2rem;">
@@ -402,10 +450,11 @@
                 return;
             }
 
-            // Установка темы (по умолчанию светлая, как в оригинале)
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
+            // Загрузка сохраненной темы
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            currentThemeIndex = themes.indexOf(savedTheme);
+            if (currentThemeIndex === -1) currentThemeIndex = 0;
+            applyTheme(themes[currentThemeIndex]);
             
             // Заполняем дропдаун
             const dropdown = document.getElementById('chapter-dropdown');
@@ -421,9 +470,21 @@
             loadOriginalChapter(0);
         };
 
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        // --- ЛОГИКА ТЕМ ---
+        function cycleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const newTheme = themes[currentThemeIndex];
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function applyTheme(themeName) {
+            // Удаляем старые атрибуты
+            document.body.removeAttribute('data-theme');
+            document.body.classList.remove('light-mode', 'dark-mode'); // На всякий случай
+            
+            // Применяем новую тему через атрибут
+            document.body.setAttribute('data-theme', themeName);
         }
 
         function switchTab(id) {
@@ -549,7 +610,8 @@
                 
                 let currentText = "";
                 let charCount = 0;
-                const LIMIT = isMobile ? 500 : 800; 
+                // Увеличенный лимит так как страница выше
+                const LIMIT = isMobile ? 650 : 1000; 
 
                 blocks.forEach(el => {
                     if(el.tagName === 'IMG') {
@@ -559,8 +621,10 @@
                         return;
                     }
                     
-                    // Убираем классы-размеры из текста, чтобы в книге он был нормальным
-                    let html = el.outerHTML.replace(/text-[^ ]+/g, "").replace(/text-5xl|text-9xl/g,"");
+                    // Убираем классы-размеры из текста, но добавляем маркеры для диалогов
+                    let html = el.outerHTML
+                        .replace(/text-[^ ]+/g, "")
+                        .replace(/text-5xl|text-9xl/g,"");
                     
                     if(charCount + el.innerText.length > LIMIT) {
                         allHtml.push(`<div class="book-content">${currentText}</div>`);
@@ -657,7 +721,6 @@
         }
 
         function updateVisibility(curr) {
-            // Оптимизация: скрываем далекие страницы
             const papers = document.querySelectorAll('.paper');
             const range = 2;
             papers.forEach((p, i) => {
@@ -672,10 +735,6 @@
             } else {
                 document.getElementById('mob-page-info').innerText = `${curr+1} / ${totalBookPages}`;
             }
-            
-            // Синхронизация главы
-            // (Упрощенно - определяем по карте. Реально надо искать ближайшую меньшую)
-            // Но мы пока не будем менять главу в оригинале при листании книги, чтобы не сбивать
         }
 
         function scrubBook(e) {
