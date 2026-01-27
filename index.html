@@ -62,9 +62,9 @@
         }
 
         /* --- КАСТОМНЫЙ СКРОЛЛБАР --- */
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-red); }
 
         /* --- Типографика --- */
@@ -83,48 +83,45 @@
             padding-left: 1rem; font-style: italic; color: inherit; opacity: 0.9;
         }
 
+        /* Поддержка изображений в тексте */
+        img { max-width: 100%; height: auto; display: block; margin: 20px auto; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .book-image-container { display: flex; justify-content: center; align-items: center; height: 100%; }
+        .book-image-container img { max-height: 100%; object-fit: contain; box-shadow: none; margin: 0; }
+
         /* === ЭЛЕМЕНТЫ УПРАВЛЕНИЯ === */
         
         /* Кнопка Темы */
         .theme-toggle {
-            position: fixed; top: 25px; right: 30px; z-index: 210;
+            position: fixed; top: 25px; right: 30px; z-index: 300;
             background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); cursor: pointer;
             color: var(--text-main); font-size: 1.2rem; width: 40px; height: 40px; border-radius: 50%;
             transition: all 0.3s; display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(5px);
         }
-        .theme-toggle:hover { border-color: var(--accent-red); color: var(--accent-red); }
+        .theme-toggle:hover { border-color: var(--accent-red); color: var(--accent-red); box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* Кнопка "Новый интерфейс" */
+        /* Кнопка "Новый интерфейс" (ВНИЗУ СПРАВА) */
         .promo-btn {
-            position: fixed; top: 120px; left: 30px; z-index: 200;
-            background: rgba(0,0,0,0.6); 
-            border: 1px solid var(--accent-red);
-            color: var(--accent-red);
-            padding: 12px 24px;
-            font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;
+            position: fixed; bottom: 30px; right: 30px; z-index: 300;
+            background: var(--accent-red); 
+            color: white;
+            padding: 15px 25px;
+            font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            backdrop-filter: blur(5px);
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-            animation: pulse-border 3s infinite;
-        }
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(138, 28, 28, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(138, 28, 28, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(138, 28, 28, 0); }
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 10px;
         }
         .promo-btn:hover { 
-            background: var(--accent-red); color: white;
-            box-shadow: 0 0 25px var(--accent-red); 
-            transform: scale(1.05);
-            animation: none;
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--accent-red); 
         }
-        .promo-btn.moved { transform: translateX(-400px); opacity: 0; pointer-events: none; }
+        .promo-btn.moved { transform: translateY(200px); opacity: 0; pointer-events: none; }
 
-        /* Кнопка "Вернуться" */
+        /* Кнопка "Вернуться" (Сверху Слева в режиме книги) */
         .return-btn {
-            position: absolute; top: 30px; left: 30px; z-index: 200;
+            position: absolute; top: 30px; left: 30px; z-index: 300;
             background: rgba(0,0,0,0.8); color: white;
             border: 1px solid #555;
             padding: 10px 20px; font-family: 'Oswald', sans-serif; font-size: 0.75rem; letter-spacing: 1px;
@@ -141,6 +138,7 @@
             transition: opacity 0.5s ease;
             width: 100%; min-height: 100vh;
             position: relative;
+            z-index: 10; /* Базовый уровень */
         }
         
         .site-header {
@@ -151,7 +149,7 @@
         }
 
         .glitch-logo { position: relative; transition: color 0.3s; }
-        .glitch-logo:hover { animation: glitch-anim 0.3s infinite; }
+        .glitch-logo:hover { animation: glitch-anim 0.3s infinite; color: var(--accent-red); }
         @keyframes glitch-anim {
             0% { transform: translate(0); }
             20% { transform: translate(-2px, 2px); }
@@ -165,11 +163,13 @@
             background-color: var(--bg-content);
             border: 1px solid var(--border-color);
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            transition: background-color 0.5s, border-color 0.5s, transform 0.5s;
+            transition: all 0.5s;
+            position: relative;
+            z-index: 20; /* Чтобы быть выше фона */
         }
-        .content-card:hover { border-color: var(--accent-red); }
+        .content-card:hover { border-color: var(--accent-red); transform: translateY(-5px); }
         
-        .fade-in-text { animation: fadeIn 0.8s ease-out; }
+        .fade-in-text { animation: fadeIn 1s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .shatter-element { 
@@ -193,14 +193,15 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--book-table-bg);
             background-image: var(--book-table-gradient);
-            z-index: 100;
+            z-index: 250; /* Выше всего остального */
             transform: translateY(-100%);
             transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             overflow: hidden;
             perspective: 2000px;
+            pointer-events: none; /* Не перекрывать, пока не активен */
         }
-        #new-interface.active { transform: translateY(0); }
+        #new-interface.active { transform: translateY(0); pointer-events: auto; }
 
         /* Частицы пыли */
         .particles-container { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
@@ -243,6 +244,7 @@
             transition: background-color 0.5s, color 0.5s;
         }
         
+        /* Хинт загиба */
         .front::after {
             content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 0;
             background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.2) 50%);
@@ -260,7 +262,7 @@
             font-family: 'Crimson Text', serif; font-size: 19px; line-height: 1.6; 
             text-align: justify; text-justify: inter-word; color: inherit;
         }
-        /* Адаптация заголовков */
+        /* Адаптация заголовков для книги */
         .book-content h1, .book-content .text-5xl, .book-content .text-9xl {
             font-size: 28px !important; line-height: 1.2 !important; margin-bottom: 20px !important;
             text-align: center; font-family: 'Cinzel', serif !important; color: inherit !important;
@@ -284,7 +286,6 @@
             transform: translateZ(-3px); box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
 
-        /* Навигация Книги */
         .book-bottom-panel {
             position: absolute; bottom: 20px; width: 100%; z-index: 50;
             display: flex; flex-direction: column; align-items: center; gap: 15px;
@@ -310,100 +311,99 @@
         /* === МОБИЛЬНАЯ АДАПТАЦИЯ (БЛОКНОТ) === */
         @media (max-width: 850px) {
             :root { 
-                --book-width: 94vw; 
-                --book-height: 75vh; 
+                --book-width: 90vw; 
+                --book-height: 70vh; 
             }
             
             /* Стили Блокнота */
             .book-container { 
                 width: var(--book-width); height: var(--book-height); 
-                margin-top: 40px; /* Отступ под пружину */
+                margin-top: 30px; 
             }
             
             /* Задняя обложка блокнота */
             .book-cover-back { 
-                width: 100%; height: calc(100% + 10px); 
-                top: 0; left: 0; border-radius: 8px;
+                width: 100%; height: calc(100% + 15px); 
+                top: -10px; left: 0; border-radius: 8px;
                 background: #1a1a1a;
+                transform: none;
             }
 
             /* Листы */
             .paper { 
                 width: 100%; height: 100%; left: 0; top: 0;
                 transform-origin: top center; /* Перелистывание ВВЕРХ */
-                transition: transform 0.5s ease-in-out;
+                transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Пружинистый эффект */
             }
             
             /* Лицевая сторона */
             .front { 
                 border-radius: 0 0 8px 8px; 
-                padding: 30px 20px; 
+                padding: 30px 20px; /* Уменьшены отступы */
                 border-right: none;
                 box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-                /* Линии блокнота (еле заметные) */
-                background-image: linear-gradient(#e5e5e5 1px, transparent 1px);
+                background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
                 background-size: 100% 28px;
+                word-wrap: break-word; /* Чтобы текст не вылезал */
             }
-            /* Коррекция цвета для темной темы на линиях */
-            body:not(.light-mode) .front {
-                background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-            }
+            
+            /* Скрываем загиб на мобилке, т.к. листаем вверх */
+            .front::after { display: none; }
 
-            .back { display: none; } /* Не нужна */
+            .back { display: none; }
             
             /* Пружина сверху */
             .notebook-spiral {
-                display: block; position: absolute; top: -25px; left: 5%; width: 90%; height: 40px;
-                background: url('data:image/svg+xml;utf8,<svg width="20" height="40" viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg"><path d="M5,5 Q15,5 15,35" stroke="%23555" stroke-width="3" fill="none"/></svg>') repeat-x;
+                display: block; position: absolute; top: -15px; left: 5%; width: 90%; height: 30px;
+                background: radial-gradient(circle, #333 30%, transparent 40%) 0 0;
+                background-size: 20px 20px;
                 z-index: 100; pointer-events: none;
             }
 
             /* Анимация переворота вверх */
             .paper.flipped {
-                transform: translateY(-92%) scale(0.95); /* Уходит вверх в "стопку" */
-                z-index: 0 !important; /* Уходит на задний план */
-                opacity: 1; /* Оставляем видимым как "загнутый край" */
-                cursor: pointer;
+                transform: translateY(-100vh) rotate(-5deg); /* Улетает далеко вверх */
+                z-index: 500 !important; /* Поверх всего */
+                opacity: 0; /* Исчезает */
             }
-            /* Затемнение перевернутых страниц */
-            .paper.flipped .front {
-                filter: brightness(0.7);
-                background-color: #333; /* Цвет "обложки" стопки */
-                border-bottom: 1px solid #555;
-                color: transparent; /* Скрываем текст на загнутом крае */
-            }
-            .paper.flipped .front * { opacity: 0; } /* Скрываем контент */
             
-            /* Текст для стопки "НАЖМИ ЧТОБЫ ВЕРНУТЬ" */
-            .paper.flipped::after {
-                content: 'ВЕРНУТЬ'; position: absolute; bottom: 5px; width: 100%; text-align: center;
-                font-family: 'Oswald'; font-size: 10px; color: #fff; letter-spacing: 2px;
-                opacity: 0.5;
+            /* Панель сверху для возврата страниц */
+            #new-interface::after {
+                content: 'НАЖМИТЕ СЮДА, ЧТОБЫ ВЕРНУТЬ СТРАНИЦУ';
+                position: absolute; top: 0; left: 0; width: 100%; height: 50px;
+                background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+                color: white; font-family: 'Oswald'; font-size: 10px; 
+                display: flex; justify-content: center; align-items: center;
+                opacity: 0; pointer-events: none; transition: opacity 0.3s;
+                z-index: 40;
             }
+            #new-interface.has-flipped-pages::after { opacity: 1; pointer-events: auto; cursor: pointer; }
 
             /* Шрифты */
-            .book-content { font-size: 16px; line-height: 1.6; }
+            .book-content { font-size: 16px; line-height: 1.5; }
             .book-content h1 { font-size: 22px !important; margin-bottom: 15px !important; }
             .chapter-title-page h1 { font-size: 24px; }
             
             /* Интерфейс */
-            #new-interface { padding-top: 0; justify-content: flex-start; }
+            #new-interface { padding-top: 0; justify-content: center; }
             
             .promo-btn { 
-                top: auto; bottom: 20px; left: 20px; width: auto; 
-                transform: none; animation: none; padding: 10px 15px; font-size: 12px;
-                background: var(--bg-content);
+                bottom: 20px; right: 20px; top: auto; left: auto;
+                width: 60px; height: 60px; border-radius: 50%; padding: 0;
+                justify-content: center; font-size: 20px;
             }
+            .promo-btn span { display: none; } /* Скрываем текст, оставляем иконку */
+            .promo-btn::before { content: '📖'; } /* Иконка книги */
             
-            .return-btn { top: 15px; left: 15px; padding: 5px 10px; font-size: 10px; background: rgba(0,0,0,0.8); }
-            .theme-toggle { top: 15px; right: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.8); }
+            .return-btn { top: 10px; left: 10px; padding: 5px 10px; font-size: 10px; background: rgba(0,0,0,0.8); }
+            .theme-toggle { top: 10px; right: 10px; width: 35px; height: 35px; }
             
             .book-bottom-panel { 
-                bottom: 10px; width: 100%; gap: 5px; 
-                flex-direction: row; justify-content: space-around; padding: 0 20px;
+                bottom: 20px; width: 100%; gap: 10px; 
+                flex-direction: column; padding: 0 30px;
             }
-            .scrubber-track { width: 50%; height: 6px; }
-            .toc-btn-small { padding: 8px 12px; font-size: 10px; background: var(--accent-red); color: white; border: none; }
+            .scrubber-track { width: 100%; height: 6px; }
+            .page-info { font-size: 10px; opacity: 0.7; }
             
             /* Старый интерфейс */
             .text-3xl { font-size: 1.4rem; }
@@ -420,10 +420,10 @@
     <div id="particles" class="particles-container"></div>
 
     <!-- КНОПКИ -->
-    <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i></button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Сменить тему"><i class="fa-solid fa-circle-half-stroke"></i></button>
     
     <div id="promo-btn" class="promo-btn" onclick="toggleNewInterface()">
-        <i class="fa-solid fa-book-open mr-2"></i> ЧИТАТЬ КАК КНИГУ
+        <span class="mr-2"><i class="fa-solid fa-book-open"></i></span> ЧИТАТЬ КАК КНИГУ
     </div>
 
     <button id="return-btn" class="return-btn" onclick="toggleNewInterface()">
@@ -458,7 +458,7 @@
     </div>
 
     <!-- === НОВЫЙ ИНТЕРФЕЙС === -->
-    <div id="new-interface">
+    <div id="new-interface" onclick="handleMobileReturnClick(event)">
         <div class="book-container" id="book">
             <div class="notebook-spiral"></div>
             <div class="book-cover-back"></div>
@@ -605,7 +605,6 @@
 
         function generateWholeBook() {
             const bookEl = document.getElementById('book');
-            // Сохраняем пружину и обложку
             const spiral = bookEl.querySelector('.notebook-spiral');
             const cover = bookEl.querySelector('.book-cover-back');
             bookEl.innerHTML = '';
@@ -635,9 +634,10 @@
             bookData.forEach((chapter, chIndex) => {
                 chapterStartMap[chIndex] = globalPageCounter;
 
+                // Парсинг (включая IMG)
                 const temp = document.createElement('div');
                 temp.innerHTML = chapter.htmlContent;
-                const elements = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, div, blockquote, ul, ol'));
+                const elements = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, div, blockquote, ul, ol, img'));
                 
                 let pagesForChapter = [];
                 pagesForChapter.push(`
@@ -651,9 +651,22 @@
                 let currentText = "";
                 let charCount = 0;
                 // Адаптивный лимит символов
-                const CHAR_LIMIT = isMobile ? 320 : 450; 
+                const CHAR_LIMIT = isMobile ? 350 : 450; 
 
                 elements.forEach((el, i) => {
+                    // ОБРАБОТКА ИЗОБРАЖЕНИЙ
+                    if (el.tagName === 'IMG') {
+                        // Если есть текст, сбрасываем его на страницу
+                        if (currentText) {
+                            pagesForChapter.push(`<div class="book-content">${currentText}</div>`);
+                            currentText = "";
+                            charCount = 0;
+                        }
+                        // Картинка на отдельной странице
+                        pagesForChapter.push(`<div class="book-image-container">${el.outerHTML}</div>`);
+                        return;
+                    }
+
                     let html = el.outerHTML
                         .replace(/text-5xl|text-9xl|text-4xl/g, "")
                         .replace(/text-gray-900|text-white|text-gray-200/g, "");
@@ -727,19 +740,24 @@
             const paper = document.getElementById(`sheet-${sheetIndex}`);
             const sheetsCount = isMobile() ? totalBookPages : Math.ceil(totalBookPages / 2);
 
+            // На мобилке: если перевернут, значит он в стопке наверху. Вернуть - клик по верхней зоне (обрабатывается handleMobileReturnClick)
+            // Но здесь мы обрабатываем клик по самому листу.
+            if (isMobile() && paper.classList.contains('flipped')) {
+                // Это "возврат" страницы, но он будет вызван из handleMobileReturnClick
+                return;
+            }
+
             if (paper.classList.contains('flipped')) {
-                // Назад
+                // ПК - Назад
                 paper.classList.remove('flipped');
                 if(!isMobile()) {
                     setTimeout(() => paper.style.zIndex = sheetsCount - sheetIndex, 350);
-                } else {
-                    setTimeout(() => paper.style.zIndex = sheetsCount - sheetIndex, 500);
-                }
+                } 
                 currentPage = sheetIndex;
             } else {
                 // Вперед
                 paper.classList.add('flipped');
-                // На мобиле убираем назад
+                // На мобиле убираем в стопку вверх
                 if(isMobile()) paper.style.zIndex = 0;
                 else paper.style.zIndex = sheetIndex + 1;
                 
@@ -747,6 +765,7 @@
             }
             
             updateScrubber(currentPage);
+            if(isMobile()) updateMobileHeader(currentPage);
             
             const realPage = isMobile() ? currentPage : currentPage * 2;
             const ch = pageToChapterMap[realPage];
@@ -755,6 +774,31 @@
                 document.getElementById('chapter-select').value = ch;
                 localStorage.setItem('aramasa_chapter', ch);
             }
+        }
+
+        function handleMobileReturnClick(e) {
+            if(!isMobile()) return;
+            // Если кликнули в верхнюю зону (где стопка страниц)
+            if(e.clientY < 60) {
+                const sheets = document.querySelectorAll('.paper');
+                // Ищем последний перевернутый лист
+                for(let i = sheets.length - 1; i >= 0; i--) {
+                    if(sheets[i].classList.contains('flipped')) {
+                        sheets[i].classList.remove('flipped');
+                        currentPage = i;
+                        updateScrubber(currentPage);
+                        updateMobileHeader(currentPage);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        function updateMobileHeader(idx) {
+            const hasFlipped = idx > 0;
+            const ui = document.getElementById('new-interface');
+            if(hasFlipped) ui.classList.add('has-flipped-pages');
+            else ui.classList.remove('has-flipped-pages');
         }
 
         function flipToPage(targetSheetIndex) {
@@ -773,6 +817,7 @@
             });
             currentPage = targetSheetIndex;
             updateScrubber(currentPage);
+            if(isMobile()) updateMobileHeader(currentPage);
         }
 
         function jumpToChapter(chIndex) {
