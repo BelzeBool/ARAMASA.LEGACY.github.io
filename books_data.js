@@ -463,14 +463,14 @@ const bookData = [
         htmlContent: `
             <p class="drop-cap">Глава в процессе написания</p>
         `
-    }.
+    },
     {
         id: 13,
         title: "Глава Тринадцатая",
         htmlContent: `
             <p class="drop-cap">Глава в процессе написания</p>
         `
-    }
+    },
     {
         id: 14,
         title: "Глава Четырнадцатая",
