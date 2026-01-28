@@ -15,12 +15,12 @@
     <style>
         /* ==================== СИСТЕМА ТЕМ ==================== */
         :root {
-            /* --- DEFAULT (DARK FICBOOK) --- */
+            /* DEFAULT (DARK) */
             --bg-main: #181818;
             --bg-card: #222222;
             --text-main: #dddddd;
             --text-muted: #888888;
-            --accent: #900;
+            --accent: #b91c1c;
             --border: #333333;
             --nav-bg: #222222;
             
@@ -32,7 +32,6 @@
             --book-height: 740px;
         }
 
-        /* LIGHT */
         [data-theme="light"] {
             --bg-main: #eef2f5;
             --bg-card: #ffffff;
@@ -41,13 +40,11 @@
             --accent: #b91c1c;
             --border: #d1d5db;
             --nav-bg: #ffffff;
-            
             --book-bg: #e5e7eb;
             --paper-color: #fff;
             --ink-color: #000;
         }
 
-        /* SEPIA */
         [data-theme="sepia"] {
             --bg-main: #fcf8e3;
             --bg-card: #f8f1d1;
@@ -56,13 +53,11 @@
             --accent: #d35400;
             --border: #e2d2b6;
             --nav-bg: #f8f1d1;
-            
             --book-bg: #5c4b37;
             --paper-color: #fdf6e3;
             --ink-color: #433422;
         }
 
-        /* MIDNIGHT */
         [data-theme="midnight"] {
             --bg-main: #020617;
             --bg-card: #0f172a;
@@ -71,34 +66,27 @@
             --accent: #38bdf8;
             --border: #1e293b;
             --nav-bg: #0f172a;
-            
             --book-bg: #020617;
             --paper-color: #1e293b;
             --ink-color: #cbd5e1;
         }
 
-        /* GLOBAL RESET */
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0;
             overflow-x: hidden;
             background-color: var(--bg-main); color: var(--text-main);
             font-family: 'Roboto', sans-serif;
             transition: background-color 0.4s ease, color 0.4s ease;
-            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
         }
 
-        /* Скроллбар (тонкий) */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-
-        /* ==================== ОРИГИНАЛЬНЫЙ РЕЖИМ (FICBOOK STYLE) ==================== */
-        
-        #original-view {
-            display: flex; flex-direction: column; min-height: 100vh;
-        }
+        /* ==================== ОРИГИНАЛЬНЫЙ РЕЖИМ ==================== */
+        #original-view { display: flex; flex-direction: column; min-height: 100vh; }
 
         .site-header {
             position: sticky; top: 0; z-index: 40;
@@ -117,31 +105,16 @@
             background-color: var(--bg-card); padding: 50px 70px;
             border-radius: 8px; border: 1px solid var(--border);
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            /* ВАЖНО: Огромный отступ снизу, чтобы плавающая кнопка не закрывала текст */
-            padding-bottom: 150px; 
-            margin-bottom: 50px;
+            padding-bottom: 150px; margin-bottom: 50px;
+            position: relative; /* Для позиционирования закладок */
         }
 
-        .chapter-title {
-            font-family: 'Merriweather', serif; font-weight: 700; font-size: 2.2rem;
-            margin-bottom: 10px; line-height: 1.2; color: var(--accent);
-        }
-        .chapter-meta {
-            font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px;
-            color: var(--text-muted); margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px;
-        }
-
-        .fic-text {
-            font-family: 'Verdana', 'Roboto', sans-serif; font-size: 19px; line-height: 1.8; text-align: justify;
-        }
+        .chapter-title { font-family: 'Merriweather', serif; font-weight: 700; font-size: 2.2rem; margin-bottom: 10px; line-height: 1.2; color: var(--accent); }
+        .chapter-meta { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .fic-text { font-family: 'Verdana', 'Roboto', sans-serif; font-size: 19px; line-height: 1.8; text-align: justify; position: relative; }
         .fic-text p { margin-bottom: 25px; text-indent: 0; }
         .fic-text .dialogue { font-weight: 500; color: var(--text-main); }
-        .fic-text img { max-width: 100%; height: auto; border-radius: 4px; margin: 20px auto; }
-
-        /* Навигация в оригинале */
-        .nav-buttons-block {
-            display: flex; gap: 20px; margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border);
-        }
+        .nav-buttons-block { display: flex; gap: 20px; margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border); }
         .big-nav-btn {
             flex: 1; padding: 18px; background: transparent; border: 2px solid var(--border);
             color: var(--text-main); font-family: 'Oswald', sans-serif; text-transform: uppercase;
@@ -149,107 +122,80 @@
         }
         .big-nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: rgba(153, 0, 0, 0.05); }
 
+        /* ВИЗУАЛЬНЫЕ МАРКЕРЫ ЗАКЛАДОК В ТЕКСТЕ */
+        .visual-bookmark-marker {
+            position: absolute;
+            left: -65px; /* Слева от текста */
+            width: 50px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 20px;
+            z-index: 10;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .visual-bookmark-marker::after {
+            content: ''; position: absolute; right: -60px; width: 60px; height: 2px;
+            background: currentColor; opacity: 0.3; pointer-events: none;
+        }
+        .visual-bookmark-marker:hover { transform: scale(1.2); }
 
-        /* ==================== РЕЖИМ КНИГИ ==================== */
+        /* ==================== РЕЖИМ КНИГИ (ПК) ==================== */
         #book-view {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--book-bg);
-            z-index: 200;
-            transform: translateY(100%);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            overflow: hidden;
+            background-color: var(--book-bg); z-index: 200;
+            transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden;
         }
         #book-view.active { transform: translateY(0); }
-
-        /* ПК КНИГА (3D) */
-        .book-container-3d {
-            position: relative; width: calc(var(--book-width) * 2); height: var(--book-height);
-            transform-style: preserve-3d; perspective: 2500px; margin-top: 20px;
-        }
-        
+        .book-container-3d { position: relative; width: calc(var(--book-width) * 2); height: var(--book-height); transform-style: preserve-3d; perspective: 2500px; margin-top: 20px; }
         .paper {
             position: absolute; width: var(--book-width); height: var(--book-height);
-            top: 0; left: var(--book-width);
-            background-color: var(--paper-color);
-            transform-origin: left center;
-            transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.5s;
-            transform-style: preserve-3d;
-            z-index: 1; cursor: pointer;
-            border-radius: 0 6px 6px 0;
-            box-shadow: inset 4px 0 20px rgba(0,0,0,0.05), 5px 0 15px rgba(0,0,0,0.1);
-            visibility: hidden; 
+            top: 0; left: var(--book-width); background-color: var(--paper-color);
+            transform-origin: left center; transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d; z-index: 1; cursor: pointer;
+            box-shadow: inset 4px 0 20px rgba(0,0,0,0.05), 5px 0 15px rgba(0,0,0,0.1); visibility: hidden; 
         }
         .paper.visible { visibility: visible; }
         .paper.flipped { transform: rotateY(-180deg); z-index: 1; box-shadow: inset -4px 0 20px rgba(0,0,0,0.05), -5px 0 15px rgba(0,0,0,0.1); }
-        
         .front, .back {
-            position: absolute; width: 100%; height: 100%;
-            padding: 70px 60px; box-sizing: border-box;
-            backface-visibility: hidden; overflow-y: hidden;
-            color: var(--ink-color); transition: color 0.5s;
+            position: absolute; width: 100%; height: 100%; padding: 70px 60px; box-sizing: border-box;
+            backface-visibility: hidden; overflow-y: auto; color: var(--ink-color); 
         }
         .front { z-index: 2; background-image: linear-gradient(to right, rgba(0,0,0,0.08) 0%, transparent 10%); }
         .back { transform: rotateY(180deg); z-index: 1; border-radius: 6px 0 0 6px; background-image: linear-gradient(to left, rgba(0,0,0,0.08) 0%, transparent 10%); }
-
+        .front::-webkit-scrollbar { width: 0; }
         .book-content { font-family: 'Crimson Text', serif; font-size: 20px; line-height: 1.65; text-align: justify; color: inherit; }
-        .book-content h1 { 
-            font-family: 'Cinzel'; font-size: 32px; text-align: center; 
-            margin-bottom: 30px; margin-top: 10px; color: inherit; border-bottom: 2px solid var(--accent); padding-bottom: 15px;
-        }
-        .book-content p { margin-bottom: 15px; text-indent: 25px; }
+        .book-content h1 { font-family: 'Cinzel'; font-size: 32px; text-align: center; margin-bottom: 30px; color: inherit; border-bottom: 2px solid var(--accent); padding-bottom: 15px; }
 
-        /* ЭЛЕМЕНТЫ УПРАВЛЕНИЯ */
+        /* UI ЭЛЕМЕНТЫ */
         .mode-switch-btn {
             position: fixed; bottom: 30px; right: 30px; z-index: 100;
-            background: var(--accent); color: white;
-            padding: 15px 25px; border-radius: 50px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
-            display: flex; align-items: center; gap: 10px;
-            font-family: 'Oswald'; font-size: 0.9rem; letter-spacing: 1px;
+            background: var(--accent); color: white; padding: 15px 25px; border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.3s;
+            display: flex; align-items: center; gap: 10px; font-family: 'Oswald'; font-size: 0.9rem;
         }
         .mode-switch-btn:hover { transform: scale(1.05); }
 
-        /* Кнопка Закладок */
         .bookmark-toggle-btn {
             position: fixed; bottom: 30px; left: 30px; z-index: 100;
             background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border);
-            width: 55px; height: 55px; border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; font-size: 1.2rem;
+            width: 55px; height: 55px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; font-size: 1.2rem;
         }
         .bookmark-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
 
         .book-ui-btn {
-            position: absolute; top: 30px; z-index: 300;
-            background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px; border-radius: 50%; width: 45px; height: 45px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;
+            position: absolute; top: 30px; z-index: 300; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
-        .book-ui-btn:hover { background: var(--accent); border-color: var(--accent); }
-        .btn-back { left: 30px; }
-        .btn-theme { right: 30px; }
-        
-        .orig-theme-btn {
-            background: transparent; border: 1px solid var(--border); color: var(--text-main);
-            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
+        .btn-back { left: 30px; } .btn-theme { right: 30px; }
+        .orig-theme-btn { background: transparent; border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        /* Навигация Книги */
-        .book-nav-bottom {
-            position: absolute; bottom: 30px; width: 100%; z-index: 50;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            opacity: 0; pointer-events: none; transition: opacity 0.5s;
-        }
-        #book-view.active .book-nav-bottom { opacity: 1; pointer-events: auto; }
-        
-        .toc-trigger-btn {
-            background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px 20px; border-radius: 20px; font-family: 'Oswald'; font-size: 12px; cursor: pointer;
-            backdrop-filter: blur(5px);
-        }
+        .book-nav-bottom { position: absolute; bottom: 30px; width: 100%; z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .toc-trigger-btn { background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 20px; font-family: 'Oswald'; font-size: 12px; cursor: pointer; backdrop-filter: blur(5px); }
         .scrubber-container { width: 400px; height: 6px; background: rgba(128,128,128,0.3); border-radius: 3px; cursor: pointer; position: relative; }
         .scrubber-fill { height: 100%; background: var(--accent); width: 0%; border-radius: 3px; }
 
@@ -268,19 +214,9 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
         .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem; }
-        .theme-btn {
-            padding: 15px; border: 1px solid var(--border); border-radius: 5px;
-            cursor: pointer; text-align: center; font-family: 'Oswald';
-            transition: 0.2s; background: var(--bg-main); color: var(--text-main);
-        }
-        .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .theme-btn { padding: 15px; border: 1px solid var(--border); border-radius: 5px; cursor: pointer; text-align: center; font-family: 'Oswald'; background: var(--bg-main); color: var(--text-main); }
         .toc-modal-list li { padding: 15px 10px; border-bottom: 1px solid var(--border); cursor: pointer; font-family: 'Crimson Text'; font-size: 18px; display: flex; justify-content: space-between; }
-        
-        .book-cover-back {
-            position: absolute; width: calc(var(--book-width) * 2 + 50px); height: calc(var(--book-height) + 20px);
-            top: -10px; left: -25px; background: #261a15; border-radius: 6px;
-            transform: translateZ(-3px); box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-        }
+        .book-cover-back { position: absolute; width: calc(var(--book-width) * 2 + 50px); height: calc(var(--book-height) + 20px); top: -10px; left: -25px; background: #261a15; border-radius: 6px; transform: translateZ(-3px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
 
         /* === ЗАКЛАДКИ UI === */
         .bookmark-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
@@ -293,13 +229,11 @@
         .bm-color { width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; display: inline-block; }
         .bm-info { flex-grow: 1; font-size: 0.9rem; font-family: 'Oswald'; }
         .bm-actions { display: flex; gap: 8px; }
-        .bm-btn { font-size: 0.8rem; padding: 6px 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .bm-btn { font-size: 0.8rem; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .bm-btn-save { background: var(--accent); color: white; border: 1px solid var(--accent); }
         .bm-btn-load { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); }
-        .bm-btn-load:hover { border-color: var(--text-main); color: var(--text-main); }
         .bm-btn-delete { background: transparent; border: 1px solid var(--border); color: #ef4444; }
-        .bm-btn-delete:hover { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
-        
+
         .auto-bookmark-bar {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: var(--accent); color: white; padding: 12px;
@@ -309,7 +243,7 @@
         }
         .auto-bookmark-bar.visible { transform: translateY(0); }
 
-        /* --- MOBILE TWEAKS --- */
+        /* --- MOBILE --- */
         @media (max-width: 850px) {
             .reader-container { 
                 margin: 0; width: 100%; border-radius: 0; border: none; padding: 25px 20px; 
@@ -319,10 +253,10 @@
             .chapter-title { font-size: 1.8rem; }
             .nav-buttons-block { flex-direction: column; gap: 15px; }
             .header-content { padding: 10px 15px; }
-            /* Скрываем кнопку книги на мобиле */
             .mode-switch-btn { display: none; }
-            
             .bookmark-toggle-btn { bottom: 20px; left: 20px; width: 45px; height: 45px; }
+            
+            .visual-bookmark-marker { left: -10px; } /* Сдвигаем маркеры на экране */
         }
     </style>
 </head>
@@ -340,20 +274,17 @@
         <i class="fa-solid fa-bookmark"></i>
     </div>
 
-    <!-- АВТО-ЗАКЛАДКА (Всплывает если есть сохранение) -->
+    <!-- АВТО-ЗАКЛАДКА -->
     <div id="auto-bookmark-toast" class="auto-bookmark-bar" onclick="loadAutoBookmark()">
-        <i class="fa-solid fa-rotate-left mr-2"></i> ВЕРНУТЬСЯ К МЕСТУ ЧТЕНИЯ (Глава <span id="auto-bm-chapter">1</span>)
+        <i class="fa-solid fa-rotate-left mr-2"></i> ВЕРНУТЬСЯ К МЕСТУ ЧТЕНИЯ
     </div>
 
     <!-- МОДАЛКА ЗАКЛАДОК -->
     <div id="bookmark-modal" class="modal-overlay" onclick="toggleBookmarkModal()">
         <div class="modal-box" onclick="event.stopPropagation()">
-            <h3 class="font-oswald text-xl mb-4 border-b pb-2 border-gray-700">ВАШИ ЗАКЛАДКИ</h3>
-            <p class="text-xs text-gray-500 mb-4">Нажмите "Сохранить", чтобы запомнить текущее место.</p>
-            <div id="bookmark-list" class="bookmark-grid">
-                <!-- Генерируется JS -->
-            </div>
-            <button class="mt-6 w-full py-2 bg-[var(--border)] text-[var(--text-main)] font-oswald rounded hover:bg-[var(--accent)] hover:text-white transition" onclick="toggleBookmarkModal()">ЗАКРЫТЬ</button>
+            <h3 class="font-oswald text-xl mb-4 border-b pb-2 border-gray-700">ЗАКЛАДКИ</h3>
+            <div id="bookmark-list" class="bookmark-grid"></div>
+            <button class="mt-6 w-full py-2 bg-[var(--border)] text-[var(--text-main)] font-oswald rounded" onclick="toggleBookmarkModal()">ЗАКРЫТЬ</button>
         </div>
     </div>
 
@@ -362,7 +293,7 @@
         <div class="modal-box" onclick="event.stopPropagation()">
             <h3 class="font-oswald text-xl mb-4 border-b pb-2 border-gray-700">ВЫБЕРИТЕ ТЕМУ</h3>
             <div class="theme-grid">
-                <div class="theme-btn" onclick="setTheme('default')" style="background:#181818; color:#ddd;">Ficbook Dark</div>
+                <div class="theme-btn" onclick="setTheme('default')" style="background:#181818; color:#ddd;">Ficbook</div>
                 <div class="theme-btn" onclick="setTheme('light')" style="background:#eef2f5; color:#111;">Светлая</div>
                 <div class="theme-btn" onclick="setTheme('sepia')" style="background:#fcf8e3; color:#4a3c31;">Сепия</div>
                 <div class="theme-btn" onclick="setTheme('midnight')" style="background:#020617; color:#e2e8f0;">Полночь</div>
@@ -374,10 +305,7 @@
     <!-- МОДАЛКА ОГЛАВЛЕНИЯ -->
     <div id="toc-modal" class="modal-overlay" onclick="toggleTOC()">
         <div class="modal-box" onclick="event.stopPropagation()">
-            <h3 class="font-oswald text-xl mb-4 border-b pb-2 border-gray-700 flex justify-between items-center">
-                ОГЛАВЛЕНИЕ
-                <i class="fa-solid fa-times cursor-pointer" onclick="toggleTOC()"></i>
-            </h3>
+            <h3 class="font-oswald text-xl mb-4 border-b pb-2 border-gray-700">ОГЛАВЛЕНИЕ</h3>
             <ul id="toc-list-content" class="toc-modal-list"></ul>
         </div>
     </div>
@@ -399,30 +327,22 @@
 
         <main class="flex-grow px-2 md:px-0">
             <div class="reader-container">
-                <div id="original-content">
-                    <div class="text-center p-10 text-[var(--text-muted)] animate-pulse">Загрузка...</div>
-                </div>
-
+                <div id="original-content"></div>
                 <div class="nav-buttons-block">
-                    <button onclick="changeChapterOrig(-1)" class="big-nav-btn">← Предыдущая глава</button>
-                    <button onclick="changeChapterOrig(1)" class="big-nav-btn">Следующая глава →</button>
+                    <button onclick="changeChapterOrig(-1)" class="big-nav-btn">← Предыдущая</button>
+                    <button onclick="changeChapterOrig(1)" class="big-nav-btn">Следующая →</button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- ======================= РЕЖИМ КНИГИ (ПК ONLY) ======================= -->
+    <!-- ======================= РЕЖИМ КНИГИ (ПК) ======================= -->
     <div id="book-view">
         <div class="book-ui-btn btn-back" onclick="toggleBookMode()"><i class="fa-solid fa-arrow-left"></i></div>
         <div class="book-ui-btn btn-theme" onclick="toggleThemeModal()"><i class="fa-solid fa-palette"></i></div>
-
-        <div class="book-container-3d" id="book-3d">
-            <div class="book-cover-back"></div>
-            <!-- Страницы -->
-        </div>
-
+        <div class="book-container-3d" id="book-3d"><div class="book-cover-back"></div></div>
         <div class="book-nav-bottom">
-            <div class="toc-trigger-btn" onclick="toggleTOC()"><i class="fa-solid fa-list-ul mr-2"></i> <span class="hidden md:inline">ОГЛАВЛЕНИЕ</span></div>
+            <div class="toc-trigger-btn" onclick="toggleTOC()"><i class="fa-solid fa-list-ul mr-2"></i> ОГЛАВЛЕНИЕ</div>
             <div class="scrubber-container" onclick="scrubBook(event)"><div class="scrubber-fill" id="scrubber-fill"></div></div>
             <span id="book-page-info" class="text-[var(--text-main)] font-oswald text-sm md:text-white">Стр. 1</span>
         </div>
@@ -433,127 +353,117 @@
         let isBookMode = false;
         let totalBookPages = 0;
         let currentPage = 0;
-        let pageToChapterMap = [];
         let chapterStartMap = {}; 
         
-        // ЗАКЛАДКИ
         const BOOKMARK_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-        let manualBookmarks = [null, null, null, null, null]; // 5 slots
+        let manualBookmarks = [null, null, null, null, null]; 
         let autoBookmark = null;
 
         window.onload = function() {
-            if (typeof bookData === 'undefined') {
-                document.getElementById('original-content').innerHTML = `<div style="color:red; text-align:center;">Ошибка загрузки books_data.js</div>`;
-                return;
-            }
+            if (typeof bookData === 'undefined') return;
 
             const savedTheme = localStorage.getItem('aramasa_theme') || 'default';
             setTheme(savedTheme);
             
-            // Загрузка закладок
             const savedManual = localStorage.getItem('aramasa_manual_bm');
             if(savedManual) manualBookmarks = JSON.parse(savedManual);
             
             const savedAuto = localStorage.getItem('aramasa_auto_bm');
             if(savedAuto) {
                 autoBookmark = JSON.parse(savedAuto);
-                // Показать тост, если есть авто-сохранение и мы не на нем
-                if(autoBookmark.chapter !== 0 || autoBookmark.scroll > 100) {
-                    document.getElementById('auto-bm-chapter').innerText = autoBookmark.chapter;
-                    document.getElementById('auto-bookmark-toast').classList.add('visible');
-                    setTimeout(() => document.getElementById('auto-bookmark-toast').classList.remove('visible'), 5000);
-                }
+                if(autoBookmark.chapter !== 0) document.getElementById('auto-bookmark-toast').classList.add('visible');
             }
 
             loadOriginalChapter(0);
             
-            // Авто-сохранение при скролле
             window.addEventListener('scroll', () => {
-                if(!isBookMode) {
-                    const scrollPos = window.scrollY;
-                    if(scrollPos > 100) {
-                         saveAutoBookmark(currentChapter, scrollPos);
-                    }
+                if(!isBookMode && window.scrollY > 200) {
+                     // Auto-save logic: percent of full page
+                     const pct = (window.scrollY / document.body.scrollHeight) * 100;
+                     autoBookmark = { chapter: currentChapter, percent: pct };
+                     localStorage.setItem('aramasa_auto_bm', JSON.stringify(autoBookmark));
                 }
             });
         };
 
-        // --- ФУНКЦИИ ЗАКЛАДОК ---
+        // --- ЗАКЛАДКИ ---
         function toggleBookmarkModal() {
             const list = document.getElementById('bookmark-list');
             list.innerHTML = '';
-            
             manualBookmarks.forEach((bm, i) => {
                 const color = BOOKMARK_COLORS[i];
-                let info = `<span style="opacity:0.5">Пустой слот</span>`;
+                let info = `<span style="opacity:0.5">Слот свободен</span>`;
                 let actionBtn = `<button class="bm-btn bm-btn-save" onclick="saveManualBookmark(${i})">СОХРАНИТЬ</button>`;
                 
                 if(bm) {
-                    info = `<b>Глава ${bm.chapter}</b> <span class="text-xs opacity-70">(${Math.round(bm.percent)}%)</span>`;
+                    info = `<b>Глава ${bm.chapter}</b> <span class="text-xs">(${Math.round(bm.percent)}%)</span>`;
                     actionBtn = `
-                        <button class="bm-btn bm-btn-load mr-2" onclick="loadManualBookmark(${i})" title="Загрузить"><i class="fa-solid fa-play"></i></button>
-                        <button class="bm-btn bm-btn-save mr-2" onclick="saveManualBookmark(${i})" title="Перезаписать"><i class="fa-solid fa-rotate"></i></button>
-                        <button class="bm-btn bm-btn-delete" onclick="deleteManualBookmark(${i})" title="Удалить"><i class="fa-solid fa-trash"></i></button>
+                        <button class="bm-btn bm-btn-load mr-2" onclick="loadManualBookmark(${i})"><i class="fa-solid fa-play"></i></button>
+                        <button class="bm-btn bm-btn-delete" onclick="deleteManualBookmark(${i})"><i class="fa-solid fa-trash"></i></button>
                     `;
                 }
-
                 const div = document.createElement('div');
                 div.className = 'bookmark-slot';
-                div.innerHTML = `
-                    <div class="flex items-center">
-                        <span class="bm-color" style="background:${color}"></span>
-                        <div class="bm-info flex flex-col">${info}</div>
-                    </div>
-                    <div class="bm-actions">${actionBtn}</div>
-                `;
+                div.innerHTML = `<div class="flex items-center"><span class="bm-color" style="background:${color}"></span><div class="bm-info flex flex-col">${info}</div></div><div class="bm-actions">${actionBtn}</div>`;
                 list.appendChild(div);
             });
-            
             document.getElementById('bookmark-modal').classList.toggle('active');
         }
 
         function saveManualBookmark(slotIndex) {
-            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-            const bm = {
-                chapter: currentChapter,
-                scroll: window.scrollY,
-                percent: scrollPercent,
-                timestamp: Date.now()
-            };
-            manualBookmarks[slotIndex] = bm;
+            const scrollPercent = (window.scrollY / document.body.scrollHeight) * 100;
+            manualBookmarks[slotIndex] = { chapter: currentChapter, percent: scrollPercent };
             localStorage.setItem('aramasa_manual_bm', JSON.stringify(manualBookmarks));
-            toggleBookmarkModal(); // Обновить UI
+            toggleBookmarkModal(); renderVisualBookmarks();
         }
 
         function loadManualBookmark(slotIndex) {
             const bm = manualBookmarks[slotIndex];
             if(bm) {
-                if(isBookMode) toggleBookMode(); // Выходим из книги
-                loadOriginalChapter(bm.chapter, bm.scroll);
+                if(isBookMode) toggleBookMode();
+                loadOriginalChapter(bm.chapter, bm.percent);
                 toggleBookmarkModal();
             }
         }
-
+        
         function deleteManualBookmark(slotIndex) {
             manualBookmarks[slotIndex] = null;
             localStorage.setItem('aramasa_manual_bm', JSON.stringify(manualBookmarks));
-            toggleBookmarkModal(); // Refresh UI
+            toggleBookmarkModal(); renderVisualBookmarks();
         }
-        
-        function saveAutoBookmark(chapter, scroll) {
-            const scrollPercent = (scroll / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-            autoBookmark = { chapter, scroll, percent: scrollPercent };
-            localStorage.setItem('aramasa_auto_bm', JSON.stringify(autoBookmark));
-        }
-        
+
         function loadAutoBookmark() {
             if(autoBookmark) {
                 if(isBookMode) toggleBookMode();
-                loadOriginalChapter(autoBookmark.chapter, autoBookmark.scroll);
+                loadOriginalChapter(autoBookmark.chapter, autoBookmark.percent);
                 document.getElementById('auto-bookmark-toast').classList.remove('visible');
             }
         }
+        
+        // Отображение флажков в тексте
+        function renderVisualBookmarks() {
+            const container = document.getElementById('original-content');
+            // Удаляем старые
+            document.querySelectorAll('.visual-bookmark-marker').forEach(e => e.remove());
+            
+            manualBookmarks.forEach((bm, i) => {
+                if(bm && bm.chapter === currentChapter) {
+                    const marker = document.createElement('div');
+                    marker.className = 'visual-bookmark-marker';
+                    marker.style.color = BOOKMARK_COLORS[i];
+                    marker.innerHTML = `<i class="fa-solid fa-bookmark"></i>`;
+                    
+                    // Расчет позиции
+                    const topPos = (bm.percent / 100) * container.scrollHeight;
+                    marker.style.top = topPos + 'px';
+                    marker.onclick = () => window.scrollTo({top: topPos + container.offsetTop, behavior: 'smooth'});
+                    
+                    container.appendChild(marker);
+                }
+            });
+        }
 
+        // --- СИСТЕМА ---
         function setTheme(theme) {
             document.body.removeAttribute('data-theme');
             if(theme !== 'default') document.body.setAttribute('data-theme', theme);
@@ -561,73 +471,60 @@
             document.getElementById('theme-modal').classList.remove('active');
         }
 
-        function toggleThemeModal() {
-            document.getElementById('theme-modal').classList.toggle('active');
-        }
+        function toggleThemeModal() { document.getElementById('theme-modal').classList.toggle('active'); }
         
         function toggleTOC() {
             const list = document.getElementById('toc-list-content');
             if(list.children.length === 0) {
-                list.innerHTML = '';
                 bookData.forEach((ch, i) => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<span>${ch.title.split(':')[0]}</span><span class="text-xs opacity-50 ml-2 text-right truncate">${ch.title.split(':')[1] || ''}</span>`;
-                    li.onclick = () => { 
-                        if(isBookMode) jumpToChapter(i); 
-                        else loadOriginalChapter(i);
-                        toggleTOC(); 
-                    };
+                    li.innerHTML = `<span>${ch.title.split(':')[0]}</span><span class="opacity-50 text-sm truncate w-1/2 text-right">${ch.title.split(':')[1]||''}</span>`;
+                    li.onclick = () => { isBookMode ? jumpToChapter(i) : loadOriginalChapter(i); toggleTOC(); };
                     list.appendChild(li);
                 });
             }
             document.getElementById('toc-modal').classList.toggle('active');
         }
 
-        function loadOriginalChapter(index, scrollToPos = 0) {
+        // --- ЛОГИКА ---
+        function loadOriginalChapter(index, scrollPercent = 0) {
             if(index < 0 || index >= bookData.length) return;
             currentChapter = index;
-
-            const content = bookData[index].htmlContent
-                .replace(/<img[^>]*>/g, "<div class='text-center text-xs opacity-50 my-2'>[Изображение]</div>")
-                .replace(/text-gray-900|text-600|text-white/g, "");
-
+            const content = bookData[index].htmlContent.replace(/<img[^>]*>/g, "<div class='text-center text-xs opacity-50'>[ИЗОБРАЖЕНИЕ]</div>").replace(/text-[^ ]+/g, "");
             const container = document.getElementById('original-content');
             
-            container.innerHTML = `
-                <div class="chapter-meta">ГЛАВА ${index}</div>
-                <h2 class="chapter-title">${bookData[index].title}</h2>
-                <div class="fic-text mt-8">${content}</div>
-            `;
+            container.innerHTML = `<div class="chapter-meta">ГЛАВА ${index}</div><h2 class="chapter-title">${bookData[index].title}</h2><div class="fic-text mt-8">${content}</div>`;
             
-            // Если есть сохраненная позиция - скроллим туда, иначе наверх
-            if(scrollToPos > 0) {
-                setTimeout(() => window.scrollTo({ top: scrollToPos, behavior: 'smooth' }), 100);
-            } else {
-                window.scrollTo(0,0);
-            }
+            // Важно: ждем рендера перед скроллом и отрисовкой закладок
+            setTimeout(() => {
+                renderVisualBookmarks();
+                if(scrollPercent > 0) {
+                    const y = (scrollPercent / 100) * document.body.scrollHeight;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                } else {
+                    window.scrollTo(0,0);
+                }
+            }, 100);
         }
 
         function changeChapterOrig(dir) { loadOriginalChapter(currentChapter + dir); }
 
-        /* === КНИГА (ПК ONLY) === */
+        // --- КНИГА (ПК) ---
         function toggleBookMode() {
-            if(window.innerWidth <= 850) return; // Не работает на моб
+            if(window.innerWidth <= 850) return; 
             const view = document.getElementById('book-view');
             const btn = document.getElementById('main-book-btn');
             
             if(!isBookMode) {
                 view.classList.add('active');
-                btn.classList.add('hidden-btn');
+                btn.style.opacity = '0';
                 document.body.style.overflow = 'hidden';
                 if(document.querySelectorAll('.paper').length === 0) generateBook();
-                if(chapterStartMap[currentChapter]) {
-                    const page = Math.floor(chapterStartMap[currentChapter]/2);
-                    setTimeout(() => flipToPage(page), 100);
-                }
+                if(chapterStartMap[currentChapter]) setTimeout(() => flipToPage(Math.floor(chapterStartMap[currentChapter]/2)), 100);
                 isBookMode = true;
             } else {
                 view.classList.remove('active');
-                btn.classList.remove('hidden-btn');
+                btn.style.opacity = '1';
                 document.body.style.overflow = 'auto';
                 isBookMode = false;
             }
@@ -641,17 +538,15 @@
 
             let allHtml = [];
             let globalPageCount = 0;
-
-            let tocHtml = `<div class="chapter-title-page h-full flex flex-col justify-center text-center"><h1>ОГЛАВЛЕНИЕ</h1><p class="opacity-50 text-sm">Навигация в меню</p></div>`;
-            allHtml.push(tocHtml);
-            allHtml.push(""); // Пустая для разворота
-            globalPageCount += 2;
+            
+            // TOC Page
+            allHtml.push(`<div class="chapter-title-page h-full flex flex-col justify-center text-center"><h1>ОГЛАВЛЕНИЕ</h1></div>`);
+            allHtml.push(""); globalPageCount += 2;
 
             bookData.forEach((ch, idx) => {
                 chapterStartMap[idx] = globalPageCount;
-                allHtml.push(`<div class="chapter-title-page h-full flex flex-col justify-center text-center px-4"><span class="block text-[var(--accent)] font-oswald text-sm mb-4 tracking-[4px]">ГЛАВА ${idx}</span><h1 class="font-cinzel text-3xl leading-snug">${ch.title}</h1></div>`);
-                allHtml.push(""); // Пустая
-                globalPageCount += 2;
+                allHtml.push(`<div class="chapter-title-page h-full flex flex-col justify-center text-center px-6"><span class="block text-sm text-[var(--accent)] mb-4 tracking-widest font-oswald">ГЛАВА ${idx}</span><h1 class="font-cinzel text-3xl">${ch.title}</h1></div>`);
+                allHtml.push(""); globalPageCount += 2;
 
                 const temp = document.createElement('div');
                 temp.innerHTML = ch.htmlContent;
@@ -666,25 +561,21 @@
                     if(el.tagName === 'IMG') {
                         if(currentText) { allHtml.push(`<div class="book-content">${currentText}</div>`); globalPageCount++; }
                         allHtml.push(`<div class="h-full flex items-center justify-center">${el.outerHTML}</div>`);
-                        currentText = ""; charCount = 0; globalPageCount++;
-                        return;
+                        currentText = ""; charCount = 0; globalPageCount++; return;
                     }
-                    
-                    let html = el.outerHTML.replace(/text-[^ ]+/g, "").replace(/text-5xl|text-9xl/g,"");
+                    let html = el.outerHTML.replace(/text-[^ ]+/g, "");
                     if(el.classList.contains('dialogue')) html = `<p class="dialogue">${el.innerHTML}</p>`;
 
                     if(charCount + el.innerText.length > LIMIT) {
                          allHtml.push(`<div class="book-content">${currentText}</div>`);
                          currentText = ""; charCount = 0; globalPageCount++;
                     }
-                    currentText += html;
-                    charCount += el.innerText.length;
+                    currentText += html; charCount += el.innerText.length;
                 });
                 if(currentText) { allHtml.push(`<div class="book-content">${currentText}</div>`); globalPageCount++; }
             });
 
             totalBookPages = Math.ceil(allHtml.length / 2);
-
             for(let i=0; i<totalBookPages; i++) {
                 const f = allHtml[i*2] || "";
                 const b = allHtml[i*2+1] || "";
@@ -693,10 +584,7 @@
                 paper.style.zIndex = totalBookPages - i;
                 paper.id = `sheet-${i}`;
                 paper.innerHTML = `<div class="front"><div style="height:100%">${f}</div><div class="absolute bottom-4 w-full text-center text-xs opacity-50 left-0 font-oswald pointer-events-none">${i*2+1}</div></div><div class="back"><div style="height:100%">${b}</div></div>`;
-                
-                paper.onclick = (e) => {
-                    flipBookPage(i);
-                };
+                paper.onclick = () => flipBookPage(i);
                 container.appendChild(paper);
             }
             updateVisibility(0);
@@ -704,14 +592,13 @@
 
         function flipBookPage(idx) {
             const paper = document.getElementById(`sheet-${idx}`);
-            if(!paper) return;
             if(paper.classList.contains('flipped')) {
                 paper.classList.remove('flipped');
                 setTimeout(() => paper.style.zIndex = totalBookPages - idx, 300);
                 currentPage = idx;
             } else {
                 paper.classList.add('flipped');
-                paper.style.zIndex = idx + 1; 
+                paper.style.zIndex = idx + 1;
                 currentPage = idx + 1;
             }
             updateVisibility(currentPage);
@@ -720,13 +607,8 @@
         function flipToPage(target) {
             const papers = document.querySelectorAll('.paper');
             papers.forEach((p, i) => {
-                if(i < target) {
-                    p.classList.add('flipped');
-                    p.style.zIndex = i + 1;
-                } else {
-                    p.classList.remove('flipped');
-                    p.style.zIndex = totalBookPages - i;
-                }
+                if(i < target) { p.classList.add('flipped'); p.style.zIndex = i + 1; }
+                else { p.classList.remove('flipped'); p.style.zIndex = totalBookPages - i; }
             });
             currentPage = target;
             updateVisibility(currentPage);
@@ -753,11 +635,8 @@
         function scrubBook(e) {
             const rect = e.currentTarget.getBoundingClientRect();
             const pct = (e.clientX - rect.left) / rect.width;
-            const target = Math.floor(pct * totalBookPages);
-            flipToPage(target);
+            flipToPage(Math.floor(pct * totalBookPages));
         }
-
-        function isMobile() { return window.innerWidth <= 850; }
     </script>
 </body>
 </html>
